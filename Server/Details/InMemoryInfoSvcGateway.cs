@@ -6,7 +6,7 @@ using JournalEntryDS = JournalEntry.UseCases.JournalEntry;
 
 namespace Server.Details
 {
-    public class InMemoryInfoSvcGateway : IInfoServicesGateway
+    internal class InMemoryInfoSvcGateway : IInfoServicesGateway
     {
         private readonly IDictionary<Type, ICollection<object>> _store;
 

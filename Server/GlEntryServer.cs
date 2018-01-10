@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using BfmEvent;
+using BfmEvent.Adapters;
 using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
@@ -30,35 +31,42 @@ namespace Server
         {
             var presenter = CreatePresenterPort(components);
             var controller = CreateController(components, presenter);
-            var listener = CreateListener(components);
+            var listener = CreateListener(components, controller.EventPort);
 
-            listener.OutPort.Connect(controller.EventPort);
             listener.Listen();
         }
 
         private static Port<IEnumerable<GlEntry>> CreatePresenterPort(IContainerBuilder components)
         {
+            var csvView = new CsvView(
+                Path.Combine(Environment.CurrentDirectory, "glentries.csv")
+            );
+
+            var jsonView = new JsonView(
+                Path.Combine(Environment.CurrentDirectory, "glentries.json")
+            );
+
             var presenter = components.Get<IPresenter<GlEntry>>();
-            var csvView = new CsvView(Path.Combine(Environment.CurrentDirectory, "glentries.csv"));
-            var jsonView =
-                new JsonView(Path.Combine(Environment.CurrentDirectory, "glentries.json"));
             presenter.AttachView(csvView);
             presenter.AttachView(jsonView);
 
             return presenter as Port<IEnumerable<GlEntry>>; //todo: eurk
         }
 
-        private static BfmEventDeviceListener CreateListener(IContainerBuilder components)
+        private static IListener CreateListener(IContainerBuilder components,
+            Port<BfmEventDS> inEventPort)
         {
             var listener = new BfmEventDeviceListener(
                 components.Get<IDevice>(),
                 components.Get<IDeserializer<BfmEventDS>>(),
                 components.Get<Port<BfmEventDS>>()
             );
+
+            listener.OutPort.Connect(inEventPort);
             return listener;
         }
 
-        private static JournalEntry.Adapters.Controller CreateController(
+        private static Controller CreateController(
             IContainerBuilder components,
             Port<IEnumerable<GlEntry>> glEntryPort)
         {

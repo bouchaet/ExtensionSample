@@ -1,6 +1,6 @@
 namespace Server.Details
 {
-    public class BfmEventPort : SimplePort<Entities.BfmEvent>
+    internal class BfmEventPort : SimplePort<Entities.BfmEvent>
     {
     }
 }

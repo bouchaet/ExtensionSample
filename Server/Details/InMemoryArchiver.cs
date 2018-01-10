@@ -6,7 +6,7 @@ using BfmEventDS = Entities.BfmEvent;
 
 namespace Server.Details
 {
-    public class InMemoryArchiver : IArchiver<BfmEventDS>
+    internal class InMemoryArchiver : IArchiver<BfmEventDS>
     {
         private readonly ICollection<BfmEventDS> _coll;
 

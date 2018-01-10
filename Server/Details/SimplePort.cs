@@ -2,7 +2,7 @@ using Entities;
 
 namespace Server.Details
 {
-    public class SimplePort<T> : Port<T> where T : class
+    internal class SimplePort<T> : Port<T> where T : class
     {
         protected override void PostReceive(T data)
         {

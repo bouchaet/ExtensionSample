@@ -23,7 +23,7 @@ namespace JournalEntry.Adapters
             return sb.ToString();
         }
 
-        public static string InternalToCsv(GlEntry obj)
+        private static string InternalToCsv(GlEntry obj)
         {
             return $"{obj.TradeIdentifier},{obj.GlType}";
         }

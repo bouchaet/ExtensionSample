@@ -4,7 +4,7 @@ using Server.Adapters;
 
 namespace Server.Details
 {
-    public class ContainerBuilder : IContainerBuilder
+    internal class ContainerBuilder : IContainerBuilder
     {
         private readonly IDictionary<Type, Type> _map;
         private readonly IDictionary<Type, object[]> _args;

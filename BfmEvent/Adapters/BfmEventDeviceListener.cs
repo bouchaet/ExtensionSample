@@ -1,7 +1,7 @@
 ﻿using System;
 using Entities;
 
-namespace BfmEvent
+namespace BfmEvent.Adapters
 {
     public class BfmEventDeviceListener : IListener
     {

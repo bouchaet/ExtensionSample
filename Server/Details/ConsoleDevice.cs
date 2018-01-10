@@ -3,7 +3,7 @@ using Entities;
 
 namespace Server.Details
 {
-    public class ConsoleDevice : IDevice
+    internal class ConsoleDevice : IDevice
     {
         public void Open()
         {

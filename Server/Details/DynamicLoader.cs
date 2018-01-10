@@ -6,7 +6,7 @@ using Server.Adapters;
 
 namespace Server.Details
 {
-    public class DynamicLoader : IDynamicLoader
+    internal class DynamicLoader : IDynamicLoader
     {
         public IEnumerable<T> GetClass<T>(string filename) where T: class
         {

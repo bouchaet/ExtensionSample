@@ -2,7 +2,7 @@ using Server.Adapters;
 
 namespace Server.Details
 {
-    public class BuilderSetup<T>
+    internal class BuilderSetup<T>
         where T : class
     {
         private readonly IContainerBuilder _builder;
