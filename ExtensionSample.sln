@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "IExtension\Entities.csproj", "{35E66FC6-726F-4C73-BC2F-CC8993BDB319}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{35E66FC6-726F-4C73-BC2F-CC8993BDB319}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionImpl", "ExtensionImpl\ExtensionImpl.csproj", "{6F00D3E5-16F3-4D0C-8F97-60799F555ACB}"
 EndProject

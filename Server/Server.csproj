@@ -68,7 +68,7 @@
       <Project>{9F3DBF9E-6AC7-46BC-800B-CBA5C1D786D0}</Project>
       <Name>BfmEvent</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IExtension\Entities.csproj">
+    <ProjectReference Include="..\Entities\Entities.csproj">
       <Project>{35e66fc6-726f-4c73-bc2f-cc8993bdb319}</Project>
       <Name>Entities</Name>
     </ProjectReference>

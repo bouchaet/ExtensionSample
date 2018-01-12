@@ -47,7 +47,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IExtension\Entities.csproj">
+    <ProjectReference Include="..\Entities\Entities.csproj">
       <Project>{35e66fc6-726f-4c73-bc2f-cc8993bdb319}</Project>
       <Name>Entities</Name>
     </ProjectReference>

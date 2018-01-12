@@ -36,7 +36,7 @@ namespace Administration.Details
             ICommand cmd = new NotFoundCommand();
             if (_coll.ContainsKey(group))
             {
-                cmd = _coll[group].First(c => string.Compare(c.Name, commandName,
+                cmd = _coll[group].FirstOrDefault(c => string.Compare(c.Name, commandName,
                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
                       ?? new NotFoundCommand();
             }

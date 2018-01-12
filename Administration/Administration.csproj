@@ -59,8 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IExtension\Entities.csproj">
-      <Project>{35E66FC6-726F-4C73-BC2F-CC8993BDB319}</Project>
+    <ProjectReference Include="..\Entities\Entities.csproj">
+      <Project>{35e66fc6-726f-4c73-bc2f-cc8993bdb319}</Project>
       <Name>Entities</Name>
     </ProjectReference>
   </ItemGroup>
