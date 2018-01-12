@@ -1,5 +1,4 @@
 ﻿using Entities;
-using Server.Adapters;
 
 namespace Server
 {

@@ -1,5 +1,4 @@
-﻿using BfmEvent;
-using BfmEvent.Details;
+﻿using BfmEvent.Details;
 using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using BfmEvent;
 using BfmEvent.Adapters;
 using Entities;
 using JournalEntry.Adapters;
