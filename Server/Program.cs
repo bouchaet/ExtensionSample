@@ -16,7 +16,7 @@ namespace Server
         private static void Main()
         {
             var components = CreateComponents();
-            components.Get<IServer>().Start();
+            components.Get<Server>().Start();
         }
 
         private static IContainerBuilder CreateComponents()
@@ -36,7 +36,7 @@ namespace Server
                 new CsvSerializer()
             );
 
-            containerBuilder.Set<IServer>().To<GlEntryServer>(containerBuilder);
+            containerBuilder.Set<Server>().To<FeatureServer>(containerBuilder);
 
             containerBuilder.Set<IAccumulator>().To<Accumulator>(
                 containerBuilder.Get<IArchiver<BfmEventDS>>(),

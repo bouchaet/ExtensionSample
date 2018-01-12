@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using BfmEvent;
-using BfmEvent.Adapters;
 using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
@@ -10,29 +8,19 @@ using JournalEntry.UseCases;
 using BfmEventDS = Entities.BfmEvent;
 using JournalEntryDS = JournalEntry.UseCases.JournalEntry;
 
-namespace Server
+namespace JournalEntry
 {
-    sealed class GlEntryServer : IServer
+    public static class JournalEntryFeatureFactory
     {
-        private readonly IContainerBuilder _components;
-
-        public GlEntryServer(IContainerBuilder components)
+        public static JournalEntryFeature Create(IContainerBuilder components)
         {
-            _components = components;
-        }
-
-        public void Start()
-        {
-            StartGlEntry(_components);
-        }
-
-        private static void StartGlEntry(IContainerBuilder components)
-        {
+            var eventCmd = new BfmEventCommand(components.Get<Port<BfmEventDS>>());
             var presenter = CreatePresenterPort(components);
             var controller = CreateController(components, presenter);
-            var listener = CreateListener(components, controller.EventPort);
+            var listener = CreateListener(components, eventCmd.OutPort, controller.EventPort);
 
-            listener.Listen();
+            var feature = new BasicJournalEntryFeature(listener, eventCmd);
+            return feature;
         }
 
         private static Port<IEnumerable<GlEntry>> CreatePresenterPort(IContainerBuilder components)
@@ -53,14 +41,10 @@ namespace Server
         }
 
         private static IListener CreateListener(IContainerBuilder components,
+            Port<BfmEventDS> outEventPort,
             Port<BfmEventDS> inEventPort)
         {
-            var listener = new BfmEventDeviceListener(
-                components.Get<IDevice>(),
-                components.Get<IDeserializer<BfmEventDS>>(),
-                components.Get<Port<BfmEventDS>>()
-            );
-
+            var listener = new BfmEventListener(outEventPort);
             listener.OutPort.Connect(inEventPort);
             return listener;
         }

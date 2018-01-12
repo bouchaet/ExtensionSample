@@ -1,7 +1,31 @@
-﻿namespace Server
+﻿using Entities;
+using Server.Adapters;
+
+namespace Server
 {
-    interface IServer
+    internal interface IServer
     {
         void Start();
+    }
+
+    internal abstract class Server
+    {
+        private readonly IContainerBuilder _components;
+        private ISwitchable _switch;
+
+        protected Server(IContainerBuilder components)
+        {
+            _components = components;
+        }
+
+        public void Start()
+        {
+            if (_switch == null)
+                _switch = BuildSwitch(_components);
+
+            _switch.TurnOn();
+        }
+
+        protected abstract ISwitchable BuildSwitch(IContainerBuilder components);
     }
 }

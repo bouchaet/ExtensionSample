@@ -38,11 +38,16 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UseCases\BasicJournalEntryFeature.cs" />
+    <Compile Include="UseCases\BfmEventCommand.cs" />
+    <Compile Include="Details\BfmEventListener.cs" />
     <Compile Include="Details\CsvSerializer.cs" />
     <Compile Include="Adapters\ICsvSerializer.cs" />
     <Compile Include="Adapters\IJsonSerializer.cs" />
     <Compile Include="Details\JsonView.cs" />
     <Compile Include="Details\NewtonSerializer.cs" />
+    <Compile Include="UseCases\JournalEntryFeature.cs" />
+    <Compile Include="JournalEntryFeatureFactory.cs" />
     <Compile Include="UseCases\Accumulator.cs" />
     <Compile Include="Adapters\Controller.cs" />
     <Compile Include="Details\CsvView.cs" />

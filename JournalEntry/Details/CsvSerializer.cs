@@ -1,7 +1,8 @@
 ﻿using System.Text;
+using JournalEntry.Adapters;
 using JournalEntry.UseCases;
 
-namespace JournalEntry.Adapters
+namespace JournalEntry.Details
 {
     public class CsvSerializer : ICsvSerializer
     {

@@ -37,6 +37,7 @@ namespace JournalEntry.Details
                 _writer.Write(obj);
                 _any = true;
             }
+            _writer.Flush();
         }
 
         public void RenderCsv(string obj)

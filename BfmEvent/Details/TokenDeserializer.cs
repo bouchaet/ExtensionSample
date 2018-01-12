@@ -1,4 +1,5 @@
-﻿using BfmEventDS = Entities.BfmEvent;
+﻿using Entities;
+using BfmEventDS = Entities.BfmEvent;
 
 namespace BfmEvent.Details
 {

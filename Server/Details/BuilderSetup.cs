@@ -1,4 +1,4 @@
-using Server.Adapters;
+using Entities;
 
 namespace Server.Details
 {

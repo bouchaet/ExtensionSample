@@ -38,6 +38,9 @@
   <ItemGroup>
     <Compile Include="Details\DynamicLoader.cs" />
     <Compile Include="Adapters\IDynamicLoader.cs" />
+    <Compile Include="FeatureServer.cs" />
+    <Compile Include="FeatureSwitch.cs" />
+    <Compile Include="ISwitchable.cs" />
     <Compile Include="ModelBuilderServer.cs" />
     <Compile Include="Adapters\PluginManager.cs" />
     <Compile Include="Details\BuilderSetup.cs" />
@@ -49,7 +52,6 @@
     <Compile Include="Details\InMemoryInfoSvcGateway.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="Details\SimplePort.cs" />
-    <Compile Include="Adapters\IContainerBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Details\StringPort.cs" />
@@ -58,6 +60,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Administration\Administration.csproj">
+      <Project>{c20f2d02-756f-4ead-8fcf-b3320f37b290}</Project>
+      <Name>Administration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BfmEvent\BfmEvent.csproj">
       <Project>{9F3DBF9E-6AC7-46BC-800B-CBA5C1D786D0}</Project>
       <Name>BfmEvent</Name>

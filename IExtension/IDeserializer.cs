@@ -1,4 +1,4 @@
-﻿namespace BfmEvent
+﻿namespace Entities
 {
     public interface IDeserializer<out TOut>
         where TOut: class

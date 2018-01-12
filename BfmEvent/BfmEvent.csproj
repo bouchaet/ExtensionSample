@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="Adapters\BfmEventController.cs" />
     <Compile Include="Adapters\BfmEventDeviceListener.cs" />
-    <Compile Include="Adapters\IDeserializer.cs" />
     <Compile Include="Details\TokenDeserializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

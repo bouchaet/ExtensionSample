@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Entities;
 using Server.Adapters;
 
 namespace Server.Details

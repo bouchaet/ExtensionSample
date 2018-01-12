@@ -18,7 +18,7 @@ namespace Server.Details
         public void Write(char[] s, int index, int count)
         {
             Console.Write(s, index, count);
-        }
+        }   
 
         public void WriteLine(string s)
         {

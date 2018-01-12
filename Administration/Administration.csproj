@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{35E66FC6-726F-4C73-BC2F-CC8993BDB319}</ProjectGuid>
+    <ProjectGuid>{C20F2D02-756F-4EAD-8FCF-B3320F37B290}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Entities</RootNamespace>
-    <AssemblyName>Entities</AssemblyName>
+    <RootNamespace>Administration</RootNamespace>
+    <AssemblyName>Administration</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,23 +32,37 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BfmEvent.cs" />
-    <Compile Include="DeviceListener.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="IContainerBuilder.cs" />
-    <Compile Include="IDeserializer.cs" />
-    <Compile Include="IFeature.cs" />
-    <Compile Include="IListener.cs" />
-    <Compile Include="IManager.cs" />
-    <Compile Include="IModelBuilder.cs" />
-    <Compile Include="IModel.cs" />
-    <Compile Include="IPlugin.cs" />
-    <Compile Include="IUnit.cs" />
-    <Compile Include="Port.cs" />
-    <Compile Include="IDevice.cs" />
+    <Compile Include="Adapters\StringDeviceListener.cs" />
+    <Compile Include="AdminFeatureFactory.cs" />
+    <Compile Include="Details\CommandParser.cs" />
+    <Compile Include="Details\CommandPort.cs" />
+    <Compile Include="Adapters\CommandPresenter.cs" />
+    <Compile Include="Adapters\Controller.cs" />
+    <Compile Include="Details\DeviceCommandView.cs" />
+    <Compile Include="Details\NotFoundCommand.cs" />
+    <Compile Include="Details\StringListPort.cs" />
+    <Compile Include="UseCases\BasicAdminFeature.cs" />
+    <Compile Include="UseCases\FeatureCommandCollection.cs" />
+    <Compile Include="UseCases\AdminFeature.cs" />
+    <Compile Include="Adapters\ICommandPresenter.cs" />
+    <Compile Include="Adapters\ICommandView.cs" />
+    <Compile Include="UseCases\HistoryCommand.cs" />
+    <Compile Include="UseCases\ListCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IExtension\Entities.csproj">
+      <Project>{35E66FC6-726F-4C73-BC2F-CC8993BDB319}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
