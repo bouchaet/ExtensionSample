@@ -6,6 +6,7 @@ using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
 using JournalEntry.UseCases;
+using Server.UseCases;
 using BfmEventDS = Entities.BfmEvent;
 using JournalEntryDS = JournalEntry.UseCases.JournalEntry;
 

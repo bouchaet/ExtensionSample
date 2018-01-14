@@ -1,7 +1,7 @@
 ﻿using Entities;
-using ModelBuilder;
 using ModelBuilder.Adapters;
 using Server.Adapters;
+using Server.UseCases;
 
 namespace Server
 {

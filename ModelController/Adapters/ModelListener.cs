@@ -21,6 +21,8 @@ namespace ModelBuilder.Adapters
 
         public void Listen()
         {
+            _device.Open();
+
             while (true)
             {
                 _device.WriteLine("Enter your model (or quit): ");

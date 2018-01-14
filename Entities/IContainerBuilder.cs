@@ -9,7 +9,7 @@ namespace Entities
         /// <returns></returns>
         T Get<T>() where T : class;
 
-        void Register<T, TDerived>(params object[] args)
+        void Register<T, TDerived>(ILifeManager mgr, params object[] args)
             where T : class
             where TDerived : T;
     }

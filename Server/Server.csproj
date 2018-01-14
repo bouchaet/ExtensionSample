@@ -36,7 +36,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentFactory.cs" />
+    <Compile Include="Details\ConsoleLogger.cs" />
     <Compile Include="Details\DynamicLoader.cs" />
+    <Compile Include="Details\PerCallLifeManager.cs" />
+    <Compile Include="Details\SingletonLifeManager.cs" />
+    <Compile Include="Details\TcpDevice.cs" />
     <Compile Include="UseCases\FeatureServer.cs" />
     <Compile Include="UseCases\FeatureSwitch.cs" />
     <Compile Include="UseCases\ISwitchable.cs" />

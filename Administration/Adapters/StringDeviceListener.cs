@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using System;
+using Entities;
 
 namespace Administration.Adapters
 {

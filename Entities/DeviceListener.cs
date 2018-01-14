@@ -23,6 +23,7 @@ namespace Entities
             while (true)
             {
                 var input = _device.ReadLine();
+
                 if (input == "quit")
                     break;
 

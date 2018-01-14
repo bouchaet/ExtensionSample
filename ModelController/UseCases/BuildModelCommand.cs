@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace ModelBuilder
+namespace ModelBuilder.UseCases
 {
     internal class BuildModelCommand : ICommand
     {

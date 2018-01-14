@@ -8,22 +8,25 @@ namespace Server.Details
     {
         private readonly IDictionary<Type, Type> _map;
         private readonly IDictionary<Type, object[]> _args;
+        private readonly IDictionary<Type, ILifeManager> _lm;
 
         public ContainerBuilder()
         {
             _map = new Dictionary<Type, Type>();
             _args = new Dictionary<Type, object[]>();
+            _lm = new Dictionary<Type, ILifeManager>();
         }
 
         public T Get<T>() where T : class
         {
-            if (_map.ContainsKey(typeof(T)))
-                return (T) Activator.CreateInstance(_map[typeof(T)], _args[typeof(T)]);
+            var abstractType = typeof(T);
+            if (_map.ContainsKey(abstractType))
+                return (T)_lm[abstractType].GetInstance(_map[abstractType], _args[abstractType]);
 
-            throw new Exception("Type is unknown");
+            throw new Exception($"Type {abstractType} is unknown");
         }
 
-        public void Register<TAbstract, TConcrete>(params object[] constructorArgs)
+        public void Register<TAbstract, TConcrete>(ILifeManager mgr, params object[] constructorArgs)
             where TAbstract : class
             where TConcrete : TAbstract
         {
@@ -35,6 +38,7 @@ namespace Server.Details
 
             _map.Add(typeof(TAbstract), typeof(TConcrete));
             _args.Add(typeof(TAbstract), constructorArgs);
+            _lm.Add(typeof(TAbstract), mgr);
         }
 
         public BuilderSetup<T> Set<T>() where T : class

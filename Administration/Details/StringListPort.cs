@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Entities;
 
-namespace Administration
+namespace Administration.Details
 {
     internal class StringListPort : Port<IList<string>>
     {

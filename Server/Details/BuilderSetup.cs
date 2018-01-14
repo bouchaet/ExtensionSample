@@ -14,13 +14,19 @@ namespace Server.Details
 
         public void To<TDerived>() where TDerived : T, new()
         {
-            _builder.Register<T, TDerived>();
+            _builder.Register<T, TDerived>(new PerCallLifeManager());
         }
 
         public void To<TDerived>(params object[] constructorArgs)
             where TDerived : T
         {
-            _builder.Register<T, TDerived>(constructorArgs);
+            _builder.Register<T, TDerived>(new PerCallLifeManager(), constructorArgs);
+        }
+
+        public void To<TDerived>(ILifeManager mgr, params object[] constructorArgs)
+            where TDerived : T
+        {
+            _builder.Register<T, TDerived>(mgr, constructorArgs);
         }
     }
 }
