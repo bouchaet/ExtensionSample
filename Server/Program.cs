@@ -5,6 +5,7 @@ using JournalEntry.Details;
 using JournalEntry.UseCases;
 using Server.Adapters;
 using Server.Details;
+using Server.UseCases;
 using BfmEventDS = Entities.BfmEvent;
 using JournalEntryDS = JournalEntry.UseCases.JournalEntry;
 
@@ -15,7 +16,7 @@ namespace Server
         private static void Main()
         {
             var components = CreateComponents();
-            components.Get<Server>().Start();
+            components.Get<UseCases.Server>().Start();
         }
 
         private static IContainerBuilder CreateComponents()
@@ -37,7 +38,7 @@ namespace Server
                 new CsvSerializer()
             );
 
-            containerBuilder.Set<Server>().To<FeatureServer>(containerBuilder);
+            containerBuilder.Set<UseCases.Server>().To<FeatureServer>(containerBuilder);
 
             containerBuilder.Set<IAccumulator>().To<Accumulator>(
                 containerBuilder.Get<IArchiver<BfmEventDS>>(),

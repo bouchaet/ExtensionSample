@@ -1,12 +1,7 @@
 ﻿using Entities;
 
-namespace Server
+namespace Server.UseCases
 {
-    internal interface IServer
-    {
-        void Start();
-    }
-
     internal abstract class Server
     {
         private readonly IContainerBuilder _components;

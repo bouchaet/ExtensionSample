@@ -4,7 +4,7 @@ using Entities;
 using JournalEntry;
 using ModelBuilder;
 
-namespace Server
+namespace Server.UseCases
 {
     internal class FeatureServer : Server
     {

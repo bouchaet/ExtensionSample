@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace Server
+namespace Server.UseCases
 {
     internal class FeatureSwitch : ISwitchable
     {

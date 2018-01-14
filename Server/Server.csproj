@@ -37,19 +37,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Details\DynamicLoader.cs" />
-    <Compile Include="FeatureServer.cs" />
-    <Compile Include="FeatureSwitch.cs" />
-    <Compile Include="ISwitchable.cs" />
-    <Compile Include="ModelBuilderServer.cs" />
+    <Compile Include="UseCases\FeatureServer.cs" />
+    <Compile Include="UseCases\FeatureSwitch.cs" />
+    <Compile Include="UseCases\ISwitchable.cs" />
+    <Compile Include="UseCases\ModelBuilderServer.cs" />
     <Compile Include="Adapters\PluginManager.cs" />
     <Compile Include="Details\BuilderSetup.cs" />
     <Compile Include="Details\ContainerBuilder.cs" />
-    <Compile Include="GlEntryServer.cs" />
+    <Compile Include="UseCases\GlEntryServer.cs" />
     <Compile Include="Details\BfmEventPort.cs" />
     <Compile Include="Details\ConsoleDevice.cs" />
     <Compile Include="Details\InMemoryArchiver.cs" />
     <Compile Include="Details\InMemoryInfoSvcGateway.cs" />
-    <Compile Include="IServer.cs" />
+    <Compile Include="UseCases\Server.cs" />
     <Compile Include="Details\SimplePort.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
