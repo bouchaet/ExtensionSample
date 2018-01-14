@@ -2,9 +2,9 @@
 using System.Text;
 using Entities;
 
-namespace ModelBuilder
+namespace ModelBuilder.Adapters
 {
-    public class ModelController : IUnit<string, string>
+    public class ModelController : UseCases.IUnit<string, string>
     {
         private readonly IManager<IModelBuilder> _modelBuilderMgr;
 

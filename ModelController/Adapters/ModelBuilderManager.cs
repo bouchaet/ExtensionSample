@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Entities;
 
-namespace ModelBuilder
+namespace ModelBuilder.Adapters
 {
     public class ModelBuilderManager : IManager<IModelBuilder>
     {

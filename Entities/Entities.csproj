@@ -39,12 +39,14 @@
     <Compile Include="ICommand.cs" />
     <Compile Include="IContainerBuilder.cs" />
     <Compile Include="IDeserializer.cs" />
+    <Compile Include="IDynamicLoader.cs" />
     <Compile Include="IFeature.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="IManager.cs" />
     <Compile Include="IModelBuilder.cs" />
     <Compile Include="IModel.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="IPluginManager.cs" />
     <Compile Include="IUnit.cs" />
     <Compile Include="Port.cs" />
     <Compile Include="IDevice.cs" />

@@ -20,8 +20,14 @@ namespace JournalEntry.Details
 
         ~CsvView()
         {
-            _writer?.Flush();
-            _writer?.Close();
+            try
+            {
+                _writer?.Flush();
+                _writer?.Close();
+            }
+            catch (System.ObjectDisposedException)
+            {
+            }
         }
 
         private void WriteHeader()

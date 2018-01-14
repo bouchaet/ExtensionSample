@@ -2,6 +2,7 @@
 using Administration;
 using Entities;
 using JournalEntry;
+using ModelBuilder;
 
 namespace Server
 {
@@ -16,7 +17,8 @@ namespace Server
         {
             var mainFeature = AdminFeatureFactory.Create(components);
             var journalEntryFeature = JournalEntryFeatureFactory.Create(components);
-            var features = new IFeature[] {mainFeature, journalEntryFeature};
+            var modelBuilderFeature = ModelBuilderFeatureFactory.Create(components);
+            var features = new IFeature[] {mainFeature, journalEntryFeature, modelBuilderFeature};
 
             mainFeature.SetFeatureCommandCollection(
                 features.ToDictionary(f => f.Name, f => f.Commands)

@@ -29,6 +29,8 @@ namespace Server
             containerBuilder.Set<Port<BfmEventDS>>().To<BfmEventPort>();
             containerBuilder.Set<IDeserializer<BfmEventDS>>().To<TokenDeserializer>();
             containerBuilder.Set<IInfoServicesGateway>().To<InMemoryInfoSvcGateway>();
+            containerBuilder.Set<IPluginManager>().To<PluginManager>(
+                containerBuilder.Get<IDynamicLoader>());
 
             containerBuilder.Set<IPresenter<GlEntry>>().To<GlEntryPresenter>(
                 new NewtonSerializer(),

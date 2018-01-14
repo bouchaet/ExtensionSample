@@ -23,9 +23,15 @@ namespace JournalEntry.Details
 
         ~JsonView()
         {
-            _writer?.Write("]");
-            _writer?.Flush();
-            _writer?.Close();
+            try
+            {
+                _writer?.Write("]");
+                _writer?.Flush();
+                _writer?.Close();
+            }
+            catch (System.ObjectDisposedException)
+            {
+            }
         }
 
         public void RenderJson(string obj)

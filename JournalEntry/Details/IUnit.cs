@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace ModelBuilder
+namespace ModelBuilder.UseCases
 {
     public interface IUnit<TIn, TOut>
         where TIn : class

@@ -1,5 +1,6 @@
 ﻿using Entities;
 using ModelBuilder;
+using ModelBuilder.Adapters;
 using Server.Adapters;
 
 namespace Server

@@ -1,14 +1,14 @@
 ﻿using System;
 using Entities;
 
-namespace ModelBuilder
+namespace ModelBuilder.Adapters
 {
     public class ModelListener : IListener
     {
         private readonly IDevice _device;
-        private readonly IUnit<string, string> _controller;
+        private readonly UseCases.IUnit<string, string> _controller;
 
-        public ModelListener(IDevice device, IUnit<string, string> controllerUnit)
+        public ModelListener(IDevice device, UseCases.IUnit<string, string> controllerUnit)
         {
             _device = device;
             _controller = controllerUnit;

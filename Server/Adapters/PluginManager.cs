@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Entities;
 
 namespace Server.Adapters
 {
-    public class PluginManager
+    public class PluginManager : IPluginManager
     {
         private readonly IDynamicLoader _loader;
         private const string DllExtension = ".dll";

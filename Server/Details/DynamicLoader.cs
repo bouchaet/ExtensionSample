@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Entities;
 using Server.Adapters;
 
 namespace Server.Details

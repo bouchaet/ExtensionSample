@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Details\DynamicLoader.cs" />
-    <Compile Include="Adapters\IDynamicLoader.cs" />
     <Compile Include="FeatureServer.cs" />
     <Compile Include="FeatureSwitch.cs" />
     <Compile Include="ISwitchable.cs" />

@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Details\IUnit.cs" />
     <Compile Include="UseCases\BasicJournalEntryFeature.cs" />
     <Compile Include="UseCases\BfmEventCommand.cs" />
     <Compile Include="Details\BfmEventListener.cs" />

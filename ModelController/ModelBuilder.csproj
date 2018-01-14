@@ -39,10 +39,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModelController.cs" />
-    <Compile Include="IUnit.cs" />
-    <Compile Include="ModelBuilderManager.cs" />
-    <Compile Include="ModelListener.cs" />
+    <Compile Include="UseCases\BuildModelCommand.cs" />
+    <Compile Include="ModelBuilderFeatureFactory.cs" />
+    <Compile Include="Adapters\ModelController.cs" />
+    <Compile Include="UseCases\ModelBuilderFeature.cs" />
+    <Compile Include="UseCases\SimpleModelBuilderFeature.cs" />
+    <Compile Include="UseCases\IUnit.cs" />
+    <Compile Include="Adapters\ModelBuilderManager.cs" />
+    <Compile Include="Adapters\ModelListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
