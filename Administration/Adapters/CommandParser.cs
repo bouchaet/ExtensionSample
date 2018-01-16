@@ -3,8 +3,7 @@ using System.Linq;
 using Administration.UseCases;
 using Entities;
 
-
-namespace Administration.Details
+namespace Administration.Adapters
 {
     internal class CommandParser
     {
@@ -36,8 +35,11 @@ namespace Administration.Details
             ICommand cmd = new NotFoundCommand();
             if (_coll.ContainsKey(group))
             {
-                cmd = _coll[group].FirstOrDefault(c => string.Compare(c.Name, commandName,
-                                                  StringComparison.InvariantCultureIgnoreCase) == 0)
+                cmd = _coll[group]
+                          .FirstOrDefault(c =>
+                              string.Compare(c.Name,
+                                  commandName,
+                                  StringComparison.InvariantCultureIgnoreCase) == 0)
                       ?? new NotFoundCommand();
             }
 

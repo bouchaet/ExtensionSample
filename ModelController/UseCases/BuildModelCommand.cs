@@ -16,11 +16,11 @@ namespace ModelBuilder.UseCases
         public string Name => "build";
         public void Execute()
         {
-            var s = "which model? ";
-            _device?.Write(s.ToCharArray(), 0, s.Length);
-            var model = _device?.ReadLine();
+            const string question = "which model? ";
+            _device?.Write(question.ToCharArray(), 0, question.Length);
+            var modelName = _device?.ReadLine();
 
-            OutPort.Transfer(model);
+            OutPort.Transfer(modelName);
         }
     }
 }

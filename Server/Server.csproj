@@ -36,6 +36,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\VolatileQueueManager.cs" />
     <Compile Include="ComponentFactory.cs" />
     <Compile Include="Details\ConsoleLogger.cs" />
     <Compile Include="Details\DynamicLoader.cs" />

@@ -8,13 +8,13 @@
     public static class Logger
     {
         private static ILogger _logger;
-        private static volatile object _syncRoot = new object();
+        private static readonly object SyncRoot = new object();
 
         public static void Set(ILogger logger)
         {
             if (_logger == null)
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (_logger == null)
                     {

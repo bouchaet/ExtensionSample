@@ -6,17 +6,17 @@ namespace Administration.Details
 {
     internal class DeviceCommandView : ICommandView
     {
-        private readonly IDevice _device;
+        private readonly IDeviceProvider _provider;
 
-        public DeviceCommandView(IDevice device)
+        public DeviceCommandView(IDeviceProvider device)
         {
-            _device = device;
+            _provider = device;
         }
 
         public void ShowAll(IEnumerable<string> cmds)
         {
             foreach (var cmd in cmds)
-                _device.WriteLine(cmd);
+                _provider?.GetDevice()?.WriteLine(cmd);
         }
     }
 }

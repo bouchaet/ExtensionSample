@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace Administration.Details
+namespace Administration.Adapters
 {
     internal class NotFoundCommand : ICommand
     {

@@ -42,12 +42,12 @@
   <ItemGroup>
     <Compile Include="Adapters\StringDeviceListener.cs" />
     <Compile Include="AdminFeatureFactory.cs" />
-    <Compile Include="Details\CommandParser.cs" />
+    <Compile Include="Adapters\CommandParser.cs" />
     <Compile Include="Details\CommandPort.cs" />
     <Compile Include="Adapters\CommandPresenter.cs" />
     <Compile Include="Adapters\Controller.cs" />
     <Compile Include="Details\DeviceCommandView.cs" />
-    <Compile Include="Details\NotFoundCommand.cs" />
+    <Compile Include="Adapters\NotFoundCommand.cs" />
     <Compile Include="Details\StringListPort.cs" />
     <Compile Include="UseCases\BasicAdminFeature.cs" />
     <Compile Include="UseCases\FeatureCommandCollection.cs" />

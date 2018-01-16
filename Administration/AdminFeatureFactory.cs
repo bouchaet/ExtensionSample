@@ -11,7 +11,9 @@ namespace Administration
         public static AdminFeature Create(IContainerBuilder components)
         {
             var device = components.Get<IDevice>();
-            var view = new DeviceCommandView(device);
+            var listener = new StringDeviceListener(device, components.Get<Port<string>>());
+
+            var view = new DeviceCommandView(listener.GetDeviceProvider());
 
             var presenter = new CommandPresenter();
             presenter.AttachView(view);
@@ -22,8 +24,6 @@ namespace Administration
                 components.Get<Port<string>>(),
                 new CommandPort()
             );
-
-            var listener = new StringDeviceListener(device, components.Get<Port<string>>());
 
             var controller = new Controller(new CommandPort());
 

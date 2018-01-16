@@ -2,7 +2,8 @@
 
 namespace Entities
 {
-    public abstract class DeviceListener<T> : IListener where T : class
+    public abstract class DeviceListener<T> : IListener, IDeviceProvider
+        where T : class
     {
         private readonly IDevice _device;
 
@@ -34,5 +35,15 @@ namespace Entities
         }
 
         protected abstract T Parse(string s);
+
+        public IDeviceProvider GetDeviceProvider()
+        {
+            return this;
+        }
+
+        public IDevice GetDevice()
+        {
+            return _device;
+        }
     }
 }
