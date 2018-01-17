@@ -8,6 +8,8 @@ using Server.Adapters;
 using Server.Details;
 using Server.UseCases;
 using NonPersistentQueueManager;
+using Server.Details.Dependency;
+using Server.Details.Ports;
 
 namespace Server
 {

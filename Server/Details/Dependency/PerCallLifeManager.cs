@@ -1,7 +1,7 @@
 using System;
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Dependency
 {
     internal class PerCallLifeManager : ILifeManager
     {

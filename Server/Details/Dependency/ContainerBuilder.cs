@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Dependency
 {
     internal class ContainerBuilder : IContainerBuilder
     {

@@ -1,6 +1,6 @@
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Dependency
 {
     internal class BuilderSetup<T>
         where T : class

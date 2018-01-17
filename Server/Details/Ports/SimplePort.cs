@@ -1,6 +1,6 @@
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Ports
 {
     internal class SimplePort<T> : Port<T> where T : class
     {
