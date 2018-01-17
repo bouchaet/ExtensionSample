@@ -8,11 +8,18 @@ namespace Entities
         Action NextStep { get; }
     }
 
+    public sealed class Actionable : IActionable
+    {
+        public string Error { get; set; }
+        public Action NextStep { get; set;  }
+    }
+
     public interface IQueueManager
     {
         IQueue CreateQueue(string queuename);
 
         void Subscribe(string queuename, Func<IQueueMessage, IActionable> callback);
+        void Subscribe(string queuename, Func<IQueueMessage, (string Error, Action NextStep)> callback);
     }
 
     public interface IQueueMessage

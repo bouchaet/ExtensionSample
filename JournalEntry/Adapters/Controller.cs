@@ -8,12 +8,12 @@ namespace JournalEntry.Adapters
     public class Controller
     {
         public Port<BfmEvent> EventPort { get; }
-        public Port<IEnumerable<GlEntry>> GlEntryPort { get; }
+        public Port<IEnumerable<PartnerGlEntry>> GlEntryPort { get; }
 
         public Controller(Port<BfmEvent> eventPort,
-            Port<IEnumerable<GlEntry>> glEntryPort,
+            Port<IEnumerable<PartnerGlEntry>> glEntryPort,
             IAccumulator accumulator,
-            IMapper<UseCases.JournalEntry, GlEntry> mapper,
+            IMapper<UseCases.JournalEntry, PartnerGlEntry> mapper,
             IInfoServicesGateway gateway)
         {
             EventPort = eventPort;

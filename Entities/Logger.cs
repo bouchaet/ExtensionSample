@@ -3,6 +3,7 @@
     public interface ILogger
     {
         void WriteInfo(string s);
+        void WriteWarning(string s);
     }
 
     public static class Logger
@@ -27,6 +28,11 @@
         public static void WriteInfo(string s)
         {
             _logger?.WriteInfo(s);
+        }
+
+        public static void WriteWarning(string s)
+        {
+            _logger?.WriteWarning(s);
         }
     }
 }

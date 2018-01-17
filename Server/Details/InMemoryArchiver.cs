@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Entities;
 using JournalEntry.UseCases;
 using BfmEventDS = Entities.BfmEvent;
 
@@ -17,6 +18,7 @@ namespace Server.Details
 
         public void Archive(BfmEventDS obj)
         {
+            Logger.WriteInfo($"archiving event {obj}...");
             if (!_coll.Contains(obj))
                 _coll.Add(obj);
         }

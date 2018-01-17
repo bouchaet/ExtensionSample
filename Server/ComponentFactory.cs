@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BfmEvent.Details;
 using Entities;
 using JournalEntry.Adapters;
@@ -6,6 +7,7 @@ using JournalEntry.UseCases;
 using Server.Adapters;
 using Server.Details;
 using Server.UseCases;
+using NonPersistentQueueManager;
 
 namespace Server
 {
@@ -18,7 +20,8 @@ namespace Server
             //containerBuilder.Set<IDevice>().To<ConsoleDevice>();
             containerBuilder.Set<IDevice>().To<TcpDevice>(new SingletonLifeManager());
             containerBuilder.Set<Port<string>>().To<StringPort>();
-            containerBuilder.Set<IMapper<JournalEntry.UseCases.JournalEntry, GlEntry>>().To<Mapper>();
+            containerBuilder.Set<IMapper<JournalEntry.UseCases.JournalEntry, PartnerGlEntry>>()
+                .To<Mapper>();
             containerBuilder.Set<IArchiver<Entities.BfmEvent>>().To<InMemoryArchiver>();
             containerBuilder.Set<Port<Entities.BfmEvent>>().To<BfmEventPort>();
             containerBuilder.Set<IDeserializer<Entities.BfmEvent>>().To<TokenDeserializer>();
@@ -26,7 +29,7 @@ namespace Server
             containerBuilder.Set<IPluginManager>().To<PluginManager>(
                 containerBuilder.Get<IDynamicLoader>());
 
-            containerBuilder.Set<IPresenter<GlEntry>>().To<GlEntryPresenter>(
+            containerBuilder.Set<IPresenter<PartnerGlEntry>>().To<GlEntryPresenter>(
                 new NewtonSerializer(),
                 new CsvSerializer()
             );
@@ -39,6 +42,16 @@ namespace Server
             );
 
             containerBuilder.Set<ILogger>().To<ConsoleLogger>();
+
+            containerBuilder.Set<IQueueMessageFactory>().To<BasicQueueMessageFactory>();
+            containerBuilder.Set<IQueueFactory>().To<QueueFactory>(
+                containerBuilder.Get<IQueueMessageFactory>()
+            );
+            containerBuilder.Set<IQueueManager>().To<VolatileQueueManager>(
+                new SingletonLifeManager(),
+                containerBuilder.Get<IQueueFactory>(),
+                new Dictionary<string, IQueue>()
+            );
 
             return containerBuilder;
         }

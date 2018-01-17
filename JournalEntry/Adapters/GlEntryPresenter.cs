@@ -4,26 +4,26 @@ using JournalEntry.UseCases;
 
 namespace JournalEntry.Adapters
 {
-    public class GlEntryPresenter : Port<IEnumerable<GlEntry>>, IPresenter<GlEntry>
+    public class GlEntryPresenter : Port<IEnumerable<PartnerGlEntry>>, IPresenter<PartnerGlEntry>
     {
         private readonly ICollection<IView> _views;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly ICsvSerializer _csvSerializer;
 
-        protected override void PreTransfer(IEnumerable<GlEntry> data)
+        protected override void PreTransfer(IEnumerable<PartnerGlEntry> data)
         {
             ShowAllElements(data);
         }
 
-        protected override void PostTransfer(IEnumerable<GlEntry> data)
+        protected override void PostTransfer(IEnumerable<PartnerGlEntry> data)
         {
         }
 
-        protected override void PreReceive(IEnumerable<GlEntry> data)
+        protected override void PreReceive(IEnumerable<PartnerGlEntry> data)
         {
         }
 
-        protected override void PostReceive(IEnumerable<GlEntry> data)
+        protected override void PostReceive(IEnumerable<PartnerGlEntry> data)
         {
         }
 
@@ -39,7 +39,7 @@ namespace JournalEntry.Adapters
             _views.Add(view);
         }
 
-        public void ShowAllElements(IEnumerable<GlEntry> entries)
+        public void ShowAllElements(IEnumerable<PartnerGlEntry> entries)
         {
             foreach (var entry in entries)
             {

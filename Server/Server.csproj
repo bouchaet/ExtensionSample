@@ -36,7 +36,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\VolatileQueueManager.cs" />
     <Compile Include="ComponentFactory.cs" />
     <Compile Include="Details\ConsoleLogger.cs" />
     <Compile Include="Details\DynamicLoader.cs" />
@@ -84,6 +83,14 @@
     <ProjectReference Include="..\ModelController\ModelBuilder.csproj">
       <Project>{d42c6d52-843c-4a4f-937d-642c0491b9a1}</Project>
       <Name>ModelBuilder</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NonPersistentQueueManager\NonPersistentQueueManager.csproj">
+      <Project>{b0fbe28b-5243-4931-badb-4d3c66d33266}</Project>
+      <Name>NonPersistentQueueManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PublishingFacade\PublishingFacade.csproj">
+      <Project>{b5087cd0-5fbf-403e-ade4-22d21e2c6034}</Project>
+      <Name>PublishingFacade</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

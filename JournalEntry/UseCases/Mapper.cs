@@ -1,11 +1,11 @@
 ﻿namespace JournalEntry.UseCases
 {
 
-    public class Mapper : IMapper<JournalEntry, GlEntry>
+    public class Mapper : IMapper<JournalEntry, PartnerGlEntry>
     {
-        public GlEntry Map(JournalEntry obj)
+        public PartnerGlEntry Map(JournalEntry obj)
         {
-            return new GlEntry(
+            return new PartnerGlEntry(
                 obj.TransactionId,
                 obj.Type);
         }

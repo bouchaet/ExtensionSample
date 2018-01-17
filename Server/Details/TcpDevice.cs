@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -49,8 +50,9 @@ namespace Server.Details
                     break;
             }
 
-            Logger.WriteInfo($"Received: {data}");
-            return data.TrimEnd(Environment.NewLine.ToCharArray());
+            var output = new string(data.Where(c => !char.IsControl(c)).ToArray());
+            Logger.WriteInfo($"Received: {output}");
+            return output.TrimEnd(Environment.NewLine.ToCharArray());
         }
 
         public void Write(char[] s, int index, int count)

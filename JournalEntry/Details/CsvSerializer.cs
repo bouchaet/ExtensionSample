@@ -24,7 +24,7 @@ namespace JournalEntry.Details
             return sb.ToString();
         }
 
-        private static string InternalToCsv(GlEntry obj)
+        private static string InternalToCsv(PartnerGlEntry obj)
         {
             return $"{obj.TradeIdentifier},{obj.GlType}";
         }

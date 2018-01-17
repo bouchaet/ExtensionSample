@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
@@ -23,7 +24,8 @@ namespace JournalEntry
             return feature;
         }
 
-        private static Port<IEnumerable<GlEntry>> CreatePresenterPort(IContainerBuilder components)
+        private static Port<IEnumerable<PartnerGlEntry>> CreatePresenterPort(
+            IContainerBuilder components)
         {
             var csvView = new CsvView(
                 Path.Combine(Environment.CurrentDirectory, "glentries.csv")
@@ -33,17 +35,33 @@ namespace JournalEntry
                 Path.Combine(Environment.CurrentDirectory, "glentries.json")
             );
 
-            var presenter = components.Get<IPresenter<GlEntry>>();
+            var presenter = components.Get<IPresenter<PartnerGlEntry>>();
             presenter.AttachView(csvView);
             presenter.AttachView(jsonView);
 
-            return presenter as Port<IEnumerable<GlEntry>>; //todo: eurk
+            return presenter as Port<IEnumerable<PartnerGlEntry>>; //todo: eurk
         }
 
         private static IListener CreateListener(IContainerBuilder components,
             Port<BfmEventDS> outEventPort,
             Port<BfmEventDS> inEventPort)
         {
+            var queueManager = components.Get<IQueueManager>();
+            var deserializer = components.Get<IDeserializer<BfmEventDS>>();
+
+            queueManager.Subscribe("eventQ", m =>
+                {
+                    if (m == null || m.Body.Length == 0)
+                        return ("Message is null or empty", null);
+
+                    return (string.Empty,
+                        () => outEventPort.Transfer(
+                            deserializer.Deserialize(
+                                Encoding.UTF8.GetString(m.Body)))
+                        );
+                }
+            );
+
             var listener = new BfmEventListener(outEventPort);
             listener.OutPort.Connect(inEventPort);
             return listener;
@@ -51,13 +69,13 @@ namespace JournalEntry
 
         private static Controller CreateController(
             IContainerBuilder components,
-            Port<IEnumerable<GlEntry>> glEntryPort)
+            Port<IEnumerable<PartnerGlEntry>> glEntryPort)
         {
             var controller = new Controller(
                 components.Get<Port<BfmEventDS>>(),
                 glEntryPort,
                 components.Get<IAccumulator>(),
-                components.Get<IMapper<JournalEntryDS, GlEntry>>(),
+                components.Get<IMapper<JournalEntryDS, PartnerGlEntry>>(),
                 components.Get<IInfoServicesGateway>()
             );
             return controller;

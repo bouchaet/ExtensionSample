@@ -1,8 +1,8 @@
 ﻿namespace JournalEntry.UseCases
 {
-    public class GlEntry
+    public class PartnerGlEntry
     {
-        public GlEntry(int transactionIdentifier, string type)
+        public PartnerGlEntry(int transactionIdentifier, string type)
         {
             TradeIdentifier = transactionIdentifier;
             GlType = type;

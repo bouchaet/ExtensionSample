@@ -35,7 +35,7 @@ namespace Server
             listener.Listen();
         }
 
-        private static Port<IEnumerable<GlEntry>> CreatePresenterPort(IContainerBuilder components)
+        private static Port<IEnumerable<PartnerGlEntry>> CreatePresenterPort(IContainerBuilder components)
         {
             var csvView = new CsvView(
                 Path.Combine(Environment.CurrentDirectory, "glentries.csv")
@@ -45,11 +45,11 @@ namespace Server
                 Path.Combine(Environment.CurrentDirectory, "glentries.json")
             );
 
-            var presenter = components.Get<IPresenter<GlEntry>>();
+            var presenter = components.Get<IPresenter<PartnerGlEntry>>();
             presenter.AttachView(csvView);
             presenter.AttachView(jsonView);
 
-            return presenter as Port<IEnumerable<GlEntry>>; //todo: eurk
+            return presenter as Port<IEnumerable<PartnerGlEntry>>; //todo: eurk
         }
 
         private static IListener CreateListener(IContainerBuilder components,
@@ -67,13 +67,13 @@ namespace Server
 
         private static Controller CreateController(
             IContainerBuilder components,
-            Port<IEnumerable<GlEntry>> glEntryPort)
+            Port<IEnumerable<PartnerGlEntry>> glEntryPort)
         {
             var controller = new Controller(
                 components.Get<Port<BfmEventDS>>(),
                 glEntryPort,
                 components.Get<IAccumulator>(),
-                components.Get<IMapper<JournalEntryDS, GlEntry>>(),
+                components.Get<IMapper<JournalEntryDS, PartnerGlEntry>>(),
                 components.Get<IInfoServicesGateway>()
             );
             return controller;
