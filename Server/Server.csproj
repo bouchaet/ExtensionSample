@@ -1,97 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{29CB5D4D-3CB4-41C4-AF11-091EB844AAC1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Server</RootNamespace>
-    <AssemblyName>Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <ProjectReference Include="..\Administration\Administration.csproj" />
+    <ProjectReference Include="..\BfmEvent\BfmEvent.csproj" />
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\JournalEntry\JournalEntry.csproj" />
+    <ProjectReference Include="..\ModelController\ModelBuilder.csproj" />
+    <ProjectReference Include="..\NonPersistentQueueManager\NonPersistentQueueManager.csproj" />
+    <ProjectReference Include="..\PublishingFacade\PublishingFacade.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ComponentFactory.cs" />
-    <Compile Include="Details\ConsoleLogger.cs" />
-    <Compile Include="Details\DynamicLoader.cs" />
-    <Compile Include="Details\PerCallLifeManager.cs" />
-    <Compile Include="Details\SingletonLifeManager.cs" />
-    <Compile Include="Details\TcpDevice.cs" />
-    <Compile Include="UseCases\FeatureServer.cs" />
-    <Compile Include="UseCases\FeatureSwitch.cs" />
-    <Compile Include="UseCases\ISwitchable.cs" />
-    <Compile Include="UseCases\ModelBuilderServer.cs" />
-    <Compile Include="Adapters\PluginManager.cs" />
-    <Compile Include="Details\BuilderSetup.cs" />
-    <Compile Include="Details\ContainerBuilder.cs" />
-    <Compile Include="UseCases\GlEntryServer.cs" />
-    <Compile Include="Details\BfmEventPort.cs" />
-    <Compile Include="Details\ConsoleDevice.cs" />
-    <Compile Include="Details\InMemoryArchiver.cs" />
-    <Compile Include="Details\InMemoryInfoSvcGateway.cs" />
-    <Compile Include="UseCases\Server.cs" />
-    <Compile Include="Details\SimplePort.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Details\StringPort.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Administration\Administration.csproj">
-      <Project>{c20f2d02-756f-4ead-8fcf-b3320f37b290}</Project>
-      <Name>Administration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BfmEvent\BfmEvent.csproj">
-      <Project>{9F3DBF9E-6AC7-46BC-800B-CBA5C1D786D0}</Project>
-      <Name>BfmEvent</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Entities\Entities.csproj">
-      <Project>{35e66fc6-726f-4c73-bc2f-cc8993bdb319}</Project>
-      <Name>Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JournalEntry\JournalEntry.csproj">
-      <Project>{059B70A0-7495-417D-87BB-4001263812DE}</Project>
-      <Name>JournalEntry</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ModelController\ModelBuilder.csproj">
-      <Project>{d42c6d52-843c-4a4f-937d-642c0491b9a1}</Project>
-      <Name>ModelBuilder</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NonPersistentQueueManager\NonPersistentQueueManager.csproj">
-      <Project>{b0fbe28b-5243-4931-badb-4d3c66d33266}</Project>
-      <Name>NonPersistentQueueManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PublishingFacade\PublishingFacade.csproj">
-      <Project>{b5087cd0-5fbf-403e-ade4-22d21e2c6034}</Project>
-      <Name>PublishingFacade</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

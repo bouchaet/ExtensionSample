@@ -44,15 +44,15 @@ namespace Server.Details
             int i;
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
-                data += Encoding.ASCII.GetString(bytes, 0, i);
+                data += Encoding.UTF8.GetString(bytes, 0, i);
 
                 if (data.EndsWith(Environment.NewLine))
                     break;
             }
 
-            var output = new string(data.Where(c => !char.IsControl(c)).ToArray());
-            Logger.WriteInfo($"Received: {output}");
-            return output.TrimEnd(Environment.NewLine.ToCharArray());
+            //var output = new string(data.Where(c => !char.IsControl(c)).ToArray());
+            Logger.WriteInfo($"Received: {data}");
+            return data.TrimEnd(Environment.NewLine.ToCharArray());
         }
 
         public void Write(char[] s, int index, int count)
@@ -64,7 +64,7 @@ namespace Server.Details
             }
 
             var stream = _client.GetStream();
-            var bytes = Encoding.ASCII.GetBytes(s);
+            var bytes = Encoding.UTF8.GetBytes(s);
             stream.Write(bytes, index, bytes.Length);
         }
 
