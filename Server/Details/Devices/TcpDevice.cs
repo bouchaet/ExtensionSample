@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Devices
 {
     internal class TcpDevice : IDevice
     {
@@ -43,7 +43,7 @@ namespace Server.Details
             int i;
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
-                data += Encoding.UTF8.GetString(bytes, 0, i);
+                data += Encoding.ASCII.GetString(bytes, 0, i);
 
                 if (data.EndsWith(Environment.NewLine))
                     break;
@@ -63,7 +63,7 @@ namespace Server.Details
             }
 
             var stream = _client.GetStream();
-            var bytes = Encoding.UTF8.GetBytes(s);
+            var bytes = Encoding.ASCII.GetBytes(s);
             stream.Write(bytes, index, bytes.Length);
         }
 
@@ -83,6 +83,17 @@ namespace Server.Details
         {
             _server.Stop();
             Logger.WriteInfo("TcpDevice stopped.");
+            //var listener = new Socket(
+            //    Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].AddressFamily,
+            //    SocketType.Stream,
+            //    ProtocolType.Tcp);
+
+            //listener.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000));
+            //listener.Listen(100);
+            //listener.BeginAccept(
+            //    ar => ((Socket) ar.AsyncState).EndAccept(ar).BeginReceive(
+            //        new byte[1024], 0, 1024, SocketFlags.None,
+            //        ar2 => Console.WriteLine(""), null), listener);
         }
     }
 }

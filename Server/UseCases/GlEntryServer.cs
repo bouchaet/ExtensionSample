@@ -6,11 +6,10 @@ using Entities;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
 using JournalEntry.UseCases;
-using Server.UseCases;
 using BfmEventDS = Entities.BfmEvent;
 using JournalEntryDS = JournalEntry.UseCases.JournalEntry;
 
-namespace Server
+namespace Server.UseCases
 {
     sealed class GlEntryServer : IServer
     {

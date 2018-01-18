@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace ModelBuilder.UseCases
+namespace JournalEntry.Details
 {
     public interface IUnit<TIn, TOut>
         where TIn : class

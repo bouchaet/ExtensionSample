@@ -1,7 +1,7 @@
 using System;
 using Entities;
 
-namespace Server.Details
+namespace Server.Details.Devices
 {
     internal class ConsoleDevice : IDevice
     {
@@ -18,7 +18,7 @@ namespace Server.Details
         public void Write(char[] s, int index, int count)
         {
             Console.Write(s, index, count);
-        }   
+        }
 
         public void WriteLine(string s)
         {
@@ -27,13 +27,11 @@ namespace Server.Details
 
         public void Seek(int pos)
         {
-
         }
 
         public void Close()
         {
             Console.WriteLine("goodbye");
         }
-
     }
 }

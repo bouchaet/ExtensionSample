@@ -9,6 +9,7 @@ using Server.Details;
 using Server.UseCases;
 using NonPersistentQueueManager;
 using Server.Details.Dependency;
+using Server.Details.Devices;
 using Server.Details.Ports;
 
 namespace Server

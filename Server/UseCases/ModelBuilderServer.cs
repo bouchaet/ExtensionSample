@@ -1,9 +1,8 @@
 ﻿using Entities;
 using ModelBuilder.Adapters;
 using Server.Adapters;
-using Server.UseCases;
 
-namespace Server
+namespace Server.UseCases
 {
     sealed class ModelBuilderServer : IServer
     {
