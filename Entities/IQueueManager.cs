@@ -11,15 +11,22 @@ namespace Entities
     public sealed class Actionable : IActionable
     {
         public string Error { get; set; }
-        public Action NextStep { get; set;  }
+        public Action NextStep { get; set; }
     }
 
     public interface IQueueManager
     {
         IQueue CreateQueue(string queuename);
 
+        // todo: the use of handlers creates strong references to the subscribers
+        // consider the weak event pattern
+        // https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/weak-event-patterns?view=netframework-4.7.1
+        //
         void Subscribe(string queuename, Func<IQueueMessage, IActionable> callback);
-        void Subscribe(string queuename, Func<IQueueMessage, (string Error, Action NextStep)> callback);
+
+        void Subscribe(
+            string queuename,
+            Func<IQueueMessage, (string Error, Action NextStep)> callback);
     }
 
     public interface IQueueMessage
@@ -44,5 +51,4 @@ namespace Entities
     {
         IQueueMessage CreateQueueMessage();
     }
-
 }

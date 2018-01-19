@@ -19,6 +19,7 @@ namespace Server
         public static IContainerBuilder CreateComponents()
         {
             var containerBuilder = new ContainerBuilder();
+            containerBuilder.Set<IListener<IDevice>>().To<SocketListener>(new SingletonLifeManager());
             containerBuilder.Set<IDynamicLoader>().To<DynamicLoader>();
             //containerBuilder.Set<IDevice>().To<ConsoleDevice>();
             containerBuilder.Set<IDevice>().To<TcpDevice>(new SingletonLifeManager());

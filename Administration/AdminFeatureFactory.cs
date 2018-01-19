@@ -8,12 +8,28 @@ namespace Administration
 {
     public static class AdminFeatureFactory
     {
+        internal class PortDeviceProvider : IDeviceProvider
+        {
+            private IDevice _device;
+
+            public PortDeviceProvider(Port<IDevice> port)
+            {
+                port.OnDataSent += (sender, device) => _device = device;
+            }
+
+            public IDevice GetDevice()
+            {
+                return _device;
+            }
+        }
+
         public static AdminFeature Create(IContainerBuilder components)
         {
-            var device = components.Get<IDevice>();
-            var listener = new StringDeviceListener(device, components.Get<Port<string>>());
-
-            var view = new DeviceCommandView(listener.GetDeviceProvider());
+            //var device = components.Get<IDevice>();
+            //var listener = new StringDeviceListener(device, components.Get<Port<string>>());
+            var listener = components.Get<IListener<IDevice>>();
+            var deviceProvider = new PortDeviceProvider(listener.OutPort);
+            var view = new DeviceCommandView(deviceProvider);
 
             var presenter = new CommandPresenter();
             presenter.AttachView(view);
@@ -27,7 +43,10 @@ namespace Administration
 
             var controller = new Controller(new CommandPort());
 
-            listener.OutPort.Connect(parser.InputPort);
+            //listener.OutPort.Connect(parser.InputPort);
+            listener.OutPort.OnDataSent +=
+                (sender, device) => parser.InputPort.Receive(device.ReadLine());
+
             parser.OutputPort.Connect(controller.InputCommandPort);
 
             var cmds = BuildCommands(commandCollection, presenter);

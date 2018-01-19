@@ -7,4 +7,9 @@ namespace Entities
         event EventHandler<EventArgs> OnShutdown;
         void Listen();
     }
+
+    public interface IListener<T> : IListener where T: class
+    {
+        Port<T> OutPort { get; }
+    }
 }
