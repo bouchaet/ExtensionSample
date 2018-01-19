@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Entities;
 
 namespace NonPersistentQueueManager
@@ -76,7 +77,7 @@ namespace NonPersistentQueueManager
                     _queues[queuename].OnReceived += (sender, message) =>
                     {
                         var result = cb?.Invoke(message);
-                        if (result?.Error != null && string.IsNullOrEmpty(result.Error))
+                        if (result?.Error != null && result.Error.Any())
                             Logger.WriteWarning(result.Error);
                         result?.NextStep?.Invoke();
                     };

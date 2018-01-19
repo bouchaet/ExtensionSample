@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -65,6 +66,11 @@ namespace Server.Adapters
                 Socket = handler
             };
 
+            Send(
+                handler,
+                "Welcome. Enter 'admin list' to see available commands." +
+                Environment.NewLine);
+
             handler.BeginReceive(
                 worker.Buffer,
                 0,
@@ -91,25 +97,24 @@ namespace Server.Adapters
                     content = content.TrimEnd(Environment.NewLine.ToCharArray());
                     if (content == "quit")
                     {
+                        Send(handler, "Bye!");
                         worker.Socket.Shutdown(SocketShutdown.Both);
                         worker.Socket.Close();
+                        return;
                     }
-                    else
-                    {
-                        TransferData(worker);
-                    }
+
+                    TransferData(worker);
+                    worker.Data.Clear();
                 }
-                else
-                {
-                    handler.BeginReceive(
-                        worker.Buffer,
-                        0,
-                        worker.BufferSize,
-                        SocketFlags.None,
-                        ReadCallback,
-                        worker
-                    );
-                }
+
+                handler.BeginReceive(
+                    worker.Buffer,
+                    0,
+                    worker.BufferSize,
+                    SocketFlags.None,
+                    ReadCallback,
+                    worker
+                );
             }
         }
 
@@ -119,9 +124,6 @@ namespace Server.Adapters
             Logger.WriteInfo($"Read {content.Length} bytes from socket. \n Data: {content}");
 
             OutPort.Transfer(new WorkerDevice(worker, this));
-
-            worker.Socket.Shutdown(SocketShutdown.Both);
-            worker.Socket.Close();
         }
 
         public void Send(Socket handler, string data)
@@ -182,12 +184,14 @@ namespace Server.Adapters
 
         public void Write(char[] s, int index, int count)
         {
-            WriteLine(new string(s) + Environment.NewLine);
+            var text = new string(s);
+            _listener.Send(_worker.Socket, text);
         }
 
         public void WriteLine(string s)
         {
-            _listener.Send(_worker.Socket, s);
+            s += Environment.NewLine;
+            Write(s.ToCharArray(), 0, s.Length);
         }
 
         public void Seek(int pos)
