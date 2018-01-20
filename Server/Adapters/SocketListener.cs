@@ -51,7 +51,8 @@ namespace Server.Adapters
         {
             //var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             //var localEndPoint = new IPEndPoint(ipHostInfo.AddressList[0], _port);
-            var localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port);
+            var localEndPoint =
+                new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port);
 
             Logger.WriteInfo($"Local address and port: {localEndPoint}");
 
@@ -203,14 +204,6 @@ namespace Server.Adapters
         public string ReadLine()
         {
             return _content;
-
-            //var worker = (Worker) _worker.Target;
-            //var buffer = new List<ArraySegment<byte>>();
-
-            //while (worker.Socket.Receive(buffer) > 0)
-            //{
-
-            //}
         }
 
         public void Write(char[] s, int index, int count)
@@ -224,6 +217,8 @@ namespace Server.Adapters
 
         public void WriteLine(string s)
         {
+            if(string.IsNullOrEmpty(s)) return;
+            
             s += Environment.NewLine;
             Write(s.ToCharArray(), 0, s.Length);
         }
