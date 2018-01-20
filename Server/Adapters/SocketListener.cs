@@ -1,20 +1,25 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Entities;
 using Server.Details.Ports;
 
 namespace Server.Adapters
 {
+
     internal class SocketListener : IListener<IDevice>
     {
         private readonly int _port;
         private readonly EventWaitHandle _accepted;
+        private readonly EventWaitHandle _stopSignal;
         public event EventHandler<EventArgs> OnShutdown;
         public Port<IDevice> OutPort { get; }
+        private readonly object _syncroot = new object();
+        private bool _stop;
+        public ListenerProtocol ListenerProtocol { get; set; }
 
         public SocketListener()
             : this(10863)
@@ -25,12 +30,26 @@ namespace Server.Adapters
         {
             _port = port;
             _accepted = new ManualResetEvent(false);
+            _stopSignal = new ManualResetEvent(false);
             OutPort = new SimplePort<IDevice>();
+            ListenerProtocol = new ChattyListenerProtocol();
+        }
+
+        public void Stop()
+        {
+            _stopSignal.Set();
+            lock (_syncroot)
+                _stop = true;
         }
 
         public void Listen()
         {
-            var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            Task.Run(() => DoListen());
+        }
+
+        private void DoListen()
+        {
+            //var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             //var localEndPoint = new IPEndPoint(ipHostInfo.AddressList[0], _port);
             var localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port);
 
@@ -45,7 +64,7 @@ namespace Server.Adapters
             listener.Bind(localEndPoint);
             listener.Listen(100);
 
-            while (true)
+            while (!_stop)
             {
                 _accepted.Reset();
 
@@ -66,10 +85,7 @@ namespace Server.Adapters
                 Socket = handler
             };
 
-            Send(
-                handler,
-                "Welcome. Enter 'admin list' to see available commands." +
-                Environment.NewLine);
+            Send(handler, ListenerProtocol.Next(ListenerProtocol.Accept));
 
             handler.BeginReceive(
                 worker.Buffer,
@@ -88,46 +104,48 @@ namespace Server.Adapters
 
             var read = handler.EndReceive(ar);
 
-            if (read > 0)
-            {
-                worker.Data.Append(Encoding.ASCII.GetString(worker.Buffer, 0, read));
-                var content = worker.Data.ToString();
-                if (content.EndsWith(Environment.NewLine))
-                {
-                    content = content.TrimEnd(Environment.NewLine.ToCharArray());
-                    if (content == "quit")
-                    {
-                        Send(handler, "Bye!");
-                        worker.Socket.Shutdown(SocketShutdown.Both);
-                        worker.Socket.Close();
-                        return;
-                    }
+            if (read <= 0) return;
 
-                    TransferData(worker);
-                    worker.Data.Clear();
+            worker.Data.Append(Encoding.ASCII.GetString(worker.Buffer, 0, read));
+            var content = worker.Data.ToString();
+            if (content.IndexOf(ListenerProtocol.EOF, StringComparison.Ordinal) > -1)
+            {
+                if (content.StartsWith(ListenerProtocol.Exit))
+                {
+                    Send(handler, ListenerProtocol.Next(content));
+                    worker.Socket.Shutdown(SocketShutdown.Both);
+                    worker.Socket.Close();
+                    return;
                 }
 
-                handler.BeginReceive(
-                    worker.Buffer,
-                    0,
-                    worker.BufferSize,
-                    SocketFlags.None,
-                    ReadCallback,
-                    worker
-                );
+                TransferData(worker);
+                var serverResponse = ListenerProtocol.Next(content);
+                Send(handler, serverResponse);
+                worker.Data.Clear();
             }
+
+            handler.BeginReceive(
+                worker.Buffer,
+                0,
+                worker.BufferSize,
+                SocketFlags.None,
+                ReadCallback,
+                worker
+            );
         }
 
         private void TransferData(Worker worker)
         {
             var content = worker.Data.ToString().TrimEnd(Environment.NewLine.ToCharArray());
-            Logger.WriteInfo($"Read {content.Length} bytes from socket. \n Data: {content}");
+            Logger.WriteInfo($"Read {content.Length} bytes from socket. \r\n Data: {content}");
 
-            OutPort.Transfer(new WorkerDevice(worker, this));
+            OutPort.Transfer(new SocketDevice(worker));
         }
 
         public void Send(Socket handler, string data)
         {
+            if (string.IsNullOrEmpty(data)) return;
+
             var byteData = Encoding.ASCII.GetBytes(data);
             handler.BeginSend(
                 byteData,
@@ -162,15 +180,20 @@ namespace Server.Adapters
         }
     }
 
-    internal class WorkerDevice : IDevice
+    internal class SocketDevice : IDevice
     {
-        private readonly Worker _worker;
-        private readonly SocketListener _listener;
+        private readonly WeakReference _worker;
+        private readonly string _content;
 
-        public WorkerDevice(Worker worker, SocketListener listener)
+        public SocketDevice(Worker worker)
         {
-            _worker = worker;
-            _listener = listener;
+            _worker = new WeakReference(worker);
+            _content = GetContent(worker);
+        }
+
+        private string GetContent(Worker worker)
+        {
+            return worker.Data.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
 
         public void Open()
@@ -179,13 +202,24 @@ namespace Server.Adapters
 
         public string ReadLine()
         {
-            return _worker.Data.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+            return _content;
+
+            //var worker = (Worker) _worker.Target;
+            //var buffer = new List<ArraySegment<byte>>();
+
+            //while (worker.Socket.Receive(buffer) > 0)
+            //{
+
+            //}
         }
 
         public void Write(char[] s, int index, int count)
         {
-            var text = new string(s);
-            _listener.Send(_worker.Socket, text);
+            if (!_worker.IsAlive) return;
+
+            var worker = (Worker) _worker.Target;
+            var bytes = Encoding.ASCII.GetBytes(s);
+            worker.Socket.Send(bytes, SocketFlags.None);
         }
 
         public void WriteLine(string s)

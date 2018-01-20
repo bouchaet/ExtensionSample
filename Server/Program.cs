@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using System;
+using Entities;
 
 namespace Server
 {
@@ -9,6 +10,9 @@ namespace Server
             var components = ComponentFactory.CreateComponents();
             Logger.Set(components.Get<ILogger>());
             components.Get<UseCases.Server>().Start();
+
+            Console.WriteLine("Press any key to quit.");
+            Console.ReadKey();
         }
     }
 }

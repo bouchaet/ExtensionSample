@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Entities
 {
@@ -9,6 +10,8 @@ namespace Entities
 
         public event EventHandler<T> OnDataSent;
         public event EventHandler<T> OnDataReceived;
+        public event Action<T> OnDataSentAsync;
+        public event Action<T> OnDataReceivedAsync;
 
         protected Port()
         {
@@ -32,8 +35,15 @@ namespace Entities
                 port.Receive(data);
             }
             OnDataSent?.Invoke(this, data);
+            DoSentAsync(data);
             PostTransfer(data);
         }
+
+        private void DoSentAsync(T data)
+        {
+            DoAsync(data, OnDataSentAsync?.GetInvocationList());
+        }
+
 
         protected abstract void PreReceive(T data);
         protected abstract void PostReceive(T data);
@@ -42,7 +52,24 @@ namespace Entities
         {
             PreReceive(data);
             OnDataReceived?.Invoke(this, data);
+            DoDataReceivedAsync(data);
             PostReceive(data);
+        }
+
+        private void DoDataReceivedAsync(T data)
+        {
+            DoAsync(data, OnDataReceivedAsync?.GetInvocationList());
+        }
+
+        private static void DoAsync(T data, IEnumerable<Delegate> delegates)
+        {
+            if (delegates == null) return;
+
+            foreach (var @delegate in delegates)
+            {
+                var handler = (Action<T>)@delegate;
+                Task.Run(() => handler(data));
+            }
         }
 
     }

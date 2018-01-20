@@ -36,6 +36,7 @@ namespace Administration.UseCases
 
         public override void Disable()
         {
+            _listener.Stop();
         }
     }
 }

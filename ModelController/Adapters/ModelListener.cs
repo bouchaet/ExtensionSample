@@ -37,5 +37,9 @@ namespace ModelBuilder.Adapters
             _device.Close();
             OnShutdown?.Invoke(this, EventArgs.Empty);
         }
+
+        public void Stop()
+        {
+        }
     }
 }

@@ -9,7 +9,8 @@ namespace Entities
 
         public readonly Port<T> OutPort;
 
-        protected DeviceListener(IDevice device,
+        protected DeviceListener(
+            IDevice device,
             Port<T> outPort)
         {
             _device = device;
@@ -32,6 +33,10 @@ namespace Entities
             }
             _device.Close();
             OnShutdown?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Stop()
+        {
         }
 
         protected abstract T Parse(string s);

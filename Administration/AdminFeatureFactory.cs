@@ -25,10 +25,8 @@ namespace Administration
 
         public static AdminFeature Create(IContainerBuilder components)
         {
-            //var device = components.Get<IDevice>();
-            //var listener = new StringDeviceListener(device, components.Get<Port<string>>());
             var listener = components.Get<IListener<IDevice>>();
-            var deviceProvider = new PortDeviceProvider(listener.OutPort);
+            var deviceProvider = new PortDeviceProvider(listener.OutPort); // todo: not threadsafe
             var view = new DeviceCommandView(deviceProvider);
 
             var presenter = new CommandPresenter();
@@ -42,14 +40,17 @@ namespace Administration
             );
 
             var controller = new Controller(new CommandPort());
-
             //listener.OutPort.Connect(parser.InputPort);
-            listener.OutPort.OnDataSent +=
-                (sender, device) => parser.InputPort.Receive(device.ReadLine());
+
+            listener.OutPort.OnDataSentAsync +=
+                device => parser.InputPort.Receive(device.ReadLine());
+
+            listener.OutPort.OnDataSentAsync +=
+                device => Logger.WriteInfo($"ADMIN: received {device.ReadLine()}");
 
             parser.OutputPort.Connect(controller.InputCommandPort);
 
-            var cmds = BuildCommands(commandCollection, presenter);
+            var cmds = BuildCommands(commandCollection, presenter); // todo : presenter holds a view which isn't thread safe
             var feature = new BasicAdminFeature(commandCollection, listener);
 
             foreach (var cmd in cmds)

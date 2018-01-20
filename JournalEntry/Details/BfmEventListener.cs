@@ -18,5 +18,9 @@ namespace JournalEntry.Details
         public void Listen()
         {
         }
+
+        public void Stop()
+        {
+        }
     }
 }
