@@ -10,5 +10,8 @@
             Id = id;
             SubId = subid;
         }
+
+        public override string ToString() => 
+            $"{{'Id': '{Id}', 'SubId': '{SubId}'}}";
     }
 }

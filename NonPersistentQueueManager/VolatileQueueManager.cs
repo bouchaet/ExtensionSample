@@ -11,8 +11,7 @@ namespace NonPersistentQueueManager
 
         private readonly IQueueFactory _factory;
 
-        private readonly IDictionary<string, ICollection<Func<IQueueMessage, IActionable>>> _clients
-            ;
+        private readonly IDictionary<string, ICollection<Func<IQueueMessage, IActionable>>> _clients;
 
         public VolatileQueueManager(IQueueFactory factory,
             IDictionary<string, IQueue> queues)
@@ -30,7 +29,7 @@ namespace NonPersistentQueueManager
             var newQ = _factory?.CreateQueue(queuename);
             _queues.Add(queuename, newQ);
 
-            if(_clients.ContainsKey(queuename))
+            if (_clients.ContainsKey(queuename))
                 ConnectClient(queuename, _clients[queuename]);
 
             return newQ;
@@ -56,17 +55,26 @@ namespace NonPersistentQueueManager
             });
         }
 
+        public void Receive(string queuename, byte[] data)
+        {
+            foreach (var q in _queues.Where(c => c.Key == queuename)
+                .Select(c => c.Value))
+            {
+                q.Post(data);
+            }
+        }
+
         private void AddClient(string qname, Func<IQueueMessage, IActionable> callback)
         {
             if (!_clients.ContainsKey(qname))
-                _clients.Add(qname, new List<Func<IQueueMessage, IActionable>> {callback});
+                _clients.Add(qname, new List<Func<IQueueMessage, IActionable>> { callback });
             else
                 _clients[qname].Add(callback);
         }
 
         private void ConnectClient(string queuename, Func<IQueueMessage, IActionable> callback)
         {
-            ConnectClient(queuename, new []{callback} );
+            ConnectClient(queuename, new[] { callback });
         }
 
         private void ConnectClient(string queuename, IEnumerable<Func<IQueueMessage, IActionable>> callbacks)

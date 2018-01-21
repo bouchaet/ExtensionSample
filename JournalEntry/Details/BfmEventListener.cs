@@ -13,8 +13,6 @@ namespace JournalEntry.Details
             OutPort = outPort;
         }
 
-        public event EventHandler<EventArgs> OnShutdown;
-
         public void Listen()
         {
         }

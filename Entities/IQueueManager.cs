@@ -27,6 +27,8 @@ namespace Entities
         void Subscribe(
             string queuename,
             Func<IQueueMessage, (string Error, Action NextStep)> callback);
+
+        void Receive(string queuename, byte[] body);
     }
 
     public interface IQueueMessage

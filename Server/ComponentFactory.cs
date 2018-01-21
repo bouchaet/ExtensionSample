@@ -19,7 +19,7 @@ namespace Server
         public static IContainerBuilder CreateComponents()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.Set<IListener<IDevice>>().To<SocketListener>(new SingletonLifeManager());
+            containerBuilder.Set<IListener<IDevice>>().To<SocketListener>();
             containerBuilder.Set<IDynamicLoader>().To<DynamicLoader>();
             //containerBuilder.Set<IDevice>().To<ConsoleDevice>();
             containerBuilder.Set<IDevice>().To<TcpDevice>(new SingletonLifeManager());
@@ -44,8 +44,6 @@ namespace Server
                 containerBuilder.Get<IArchiver<Entities.BfmEvent>>(),
                 new SizeByDatePolicy(2)
             );
-
-            containerBuilder.Set<ILogger>().To<ConsoleLogger>();
 
             containerBuilder.Set<IQueueMessageFactory>().To<BasicQueueMessageFactory>();
             containerBuilder.Set<IQueueFactory>().To<QueueFactory>(

@@ -15,7 +15,7 @@ namespace BfmEvent.Adapters
             _deserializer = deserializer;
         }
 
-        public new event EventHandler<EventArgs> OnShutdown;
+        //public new event EventHandler<EventArgs> OnShutdown;
 
         protected override Entities.BfmEvent Parse(string s)
         {

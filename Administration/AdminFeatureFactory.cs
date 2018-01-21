@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Administration.Adapters;
 using Administration.Details;
 using Administration.UseCases;
@@ -8,21 +11,6 @@ namespace Administration
 {
     public static class AdminFeatureFactory
     {
-        internal class PortDeviceProvider : IDeviceProvider
-        {
-            private IDevice _device;
-
-            public PortDeviceProvider(Port<IDevice> port)
-            {
-                port.OnDataSent += (sender, device) => _device = device;
-            }
-
-            public IDevice GetDevice()
-            {
-                return _device;
-            }
-        }
-
         public static AdminFeature Create(IContainerBuilder components)
         {
             var listener = components.Get<IListener<IDevice>>();
@@ -42,11 +30,14 @@ namespace Administration
             var controller = new Controller(new CommandPort());
             //listener.OutPort.Connect(parser.InputPort);
 
-            listener.OutPort.OnDataSentAsync +=
-                device => parser.InputPort.Receive(device.ReadLine());
+            // listener.OutPort.OnDataSentAsync +=
+            //     device => parser.InputPort.Receive(device.ReadLine());
 
-            listener.OutPort.OnDataSentAsync +=
-                device => Logger.WriteInfo($"ADMIN: received {device.ReadLine()}");
+            // Another approach. Request/Response
+            // adminserver.Start() performed on listener by the feature
+            var adminserver = new AdministrationServer(listener);
+            adminserver.Add("*", s => DefaultRoute(s, parser));
+            adminserver.Add("help", s => HelpRoute(parser));
 
             parser.OutputPort.Connect(controller.InputCommandPort);
 
@@ -59,11 +50,47 @@ namespace Administration
             return feature;
         }
 
-        private static IEnumerable<ICommand> BuildCommands(FeatureCommandCollection coll,
+        private static string HelpRoute(CommandParser parser)
+        {
+            parser.InputPort.Receive("admin list");
+            return string.Empty;
+        }
+
+        private static string DefaultRoute(
+            string input,
+            FeatureCommandCollection commandCollection,
+            IContainerBuilder components)
+        {
+            Logger.WriteInfo("Running '*' route.");
+            var cmdparser = new CommandParser(commandCollection,
+                components.Get<Port<string>>(),
+                new CommandPort()
+            );
+
+            var port = new CommandPort();
+            cmdparser.OutputPort.Connect(port);
+            port.OnDataReceived += (s, cmd) => cmd.Execute();
+
+            cmdparser.InputPort.Receive(input);
+
+            return string.Empty;
+        }
+
+        private static string DefaultRoute(string input,
+            CommandParser parser)
+        {
+            Logger.WriteInfo("Running '*' route using command parser.");
+            parser.InputPort.Receive(input);
+            return string.Empty;
+        }
+
+        private static IEnumerable<ICommand> BuildCommands(
+            FeatureCommandCollection coll,
             ICommandPresenter presenter)
         {
             var listCommand = new ListCommand(coll, new StringListPort());
-            listCommand.OutPort.OnDataSent += (sender, list) => presenter.ShowCommands(list);
+            listCommand.OutPort.OnDataSent +=
+                (sender, list) => presenter.ShowCommands(list);
 
             yield return listCommand;
             yield return new HistoryCommand();

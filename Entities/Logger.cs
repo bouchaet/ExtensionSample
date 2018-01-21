@@ -1,38 +1,42 @@
 ﻿namespace Entities
 {
-    public interface ILogger
+    public class Logger
     {
-        void WriteInfo(string s);
-        void WriteWarning(string s);
+        public static Logger Singleton;
+
+        static Logger() => Singleton = new Logger();
+
+        private Logger() { }
+
+        public event System.EventHandler<string> Info;
+
+        public event System.EventHandler<string> Warning;
+
+        public event System.EventHandler<string> Error;
+
+        public static void WriteInfo(string s) =>
+            Singleton.Info?.Invoke(Singleton, s);
+
+        public static void WriteWarning(string s) =>
+            Singleton.Warning?.Invoke(Singleton, s);
+
+        public static void WriteError(string s) =>
+            Singleton.Error?.Invoke(Singleton, s);
     }
 
-    public static class Logger
+    public class Debug
     {
-        private static ILogger _logger;
-        private static readonly object SyncRoot = new object();
+        static Debug() => Singleton = new Debug();
 
-        public static void Set(ILogger logger)
+        private Debug()
         {
-            if (_logger == null)
-            {
-                lock (SyncRoot)
-                {
-                    if (_logger == null)
-                    {
-                        _logger = logger;
-                    }
-                }
-            }
         }
 
-        public static void WriteInfo(string s)
-        {
-            _logger?.WriteInfo(s);
-        }
+        public static Debug Singleton { get; }
 
-        public static void WriteWarning(string s)
-        {
-            _logger?.WriteWarning(s);
-        }
+        public event System.EventHandler<string> Log;
+
+        public static void Write(string msg) =>
+            Singleton.Log?.Invoke(Singleton, msg);
     }
 }

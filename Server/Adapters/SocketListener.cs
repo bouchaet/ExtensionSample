@@ -9,17 +9,15 @@ using Server.Details.Ports;
 
 namespace Server.Adapters
 {
-
     internal class SocketListener : IListener<IDevice>
     {
-        private readonly int _port;
+        private int PortNumber { get; set; }
         private readonly EventWaitHandle _accepted;
         private readonly EventWaitHandle _stopSignal;
-        public event EventHandler<EventArgs> OnShutdown;
         public Port<IDevice> OutPort { get; }
         private readonly object _syncroot = new object();
         private bool _stop;
-        public ListenerProtocol ListenerProtocol { get; set; }
+        public ListenerProtocol ListenerProtocol { private get; set; }
 
         public SocketListener()
             : this(10863)
@@ -28,7 +26,7 @@ namespace Server.Adapters
 
         public SocketListener(int port)
         {
-            _port = port;
+            PortNumber = port;
             _accepted = new ManualResetEvent(false);
             _stopSignal = new ManualResetEvent(false);
             OutPort = new SimplePort<IDevice>();
@@ -47,12 +45,20 @@ namespace Server.Adapters
             Task.Run(() => DoListen());
         }
 
+        public IListener<IDevice> Configure(string propertyName, object value)
+        {
+            if(propertyName == "port")
+                PortNumber = (int)value;
+
+            return this;
+        }
+
         private void DoListen()
         {
             //var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             //var localEndPoint = new IPEndPoint(ipHostInfo.AddressList[0], _port);
             var localEndPoint =
-                new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port);
+                new IPEndPoint(IPAddress.Parse("127.0.0.1"), PortNumber);
 
             Logger.WriteInfo($"Local address and port: {localEndPoint}");
 
