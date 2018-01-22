@@ -1,25 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{35E66FC6-726F-4C73-BC2F-CC8993BDB319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{35E66FC6-726F-4C73-BC2F-CC8993BDB319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionImpl", "ExtensionImpl\ExtensionImpl.csproj", "{6F00D3E5-16F3-4D0C-8F97-60799F555ACB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtensionImpl", "ExtensionImpl\ExtensionImpl.csproj", "{6F00D3E5-16F3-4D0C-8F97-60799F555ACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelBuilder", "ModelController\ModelBuilder.csproj", "{D42C6D52-843C-4A4F-937D-642C0491B9A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelBuilder", "ModelController\ModelBuilder.csproj", "{D42C6D52-843C-4A4F-937D-642C0491B9A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{29CB5D4D-3CB4-41C4-AF11-091EB844AAC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{29CB5D4D-3CB4-41C4-AF11-091EB844AAC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BfmEvent", "BfmEvent\BfmEvent.csproj", "{9F3DBF9E-6AC7-46BC-800B-CBA5C1D786D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BfmEvent", "BfmEvent\BfmEvent.csproj", "{9F3DBF9E-6AC7-46BC-800B-CBA5C1D786D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JournalEntry", "JournalEntry\JournalEntry.csproj", "{059B70A0-7495-417D-87BB-4001263812DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JournalEntry", "JournalEntry\JournalEntry.csproj", "{059B70A0-7495-417D-87BB-4001263812DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Administration", "Administration\Administration.csproj", "{C20F2D02-756F-4EAD-8FCF-B3320F37B290}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administration", "Administration\Administration.csproj", "{C20F2D02-756F-4EAD-8FCF-B3320F37B290}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonPersistentQueueManager", "NonPersistentQueueManager\NonPersistentQueueManager.csproj", "{B0FBE28B-5243-4931-BADB-4D3C66D33266}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NonPersistentQueueManager", "NonPersistentQueueManager\NonPersistentQueueManager.csproj", "{B0FBE28B-5243-4931-BADB-4D3C66D33266}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishingFacade", "PublishingFacade\PublishingFacade.csproj", "{B5087CD0-5FBF-403E-ADE4-22D21E2C6034}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishingFacade", "PublishingFacade\PublishingFacade.csproj", "{B5087CD0-5FBF-403E-ADE4-22D21E2C6034}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aws", "Aws\Aws.csproj", "{FE122E58-1DB0-4A56-A338-C1DFF16A217D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{B5087CD0-5FBF-403E-ADE4-22D21E2C6034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5087CD0-5FBF-403E-ADE4-22D21E2C6034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5087CD0-5FBF-403E-ADE4-22D21E2C6034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

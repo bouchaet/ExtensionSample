@@ -47,8 +47,8 @@ namespace Server.Adapters
 
         public IListener<IDevice> Configure(string propertyName, object value)
         {
-            if(propertyName == "port")
-                PortNumber = (int)value;
+            if (propertyName == "port")
+                PortNumber = (int) value;
 
             return this;
         }
@@ -149,7 +149,7 @@ namespace Server.Adapters
             OutPort.Transfer(new SocketDevice(worker));
         }
 
-        public void Send(Socket handler, string data)
+        private void Send(Socket handler, string data)
         {
             if (string.IsNullOrEmpty(data)) return;
 
@@ -223,8 +223,8 @@ namespace Server.Adapters
 
         public void WriteLine(string s)
         {
-            if(string.IsNullOrEmpty(s)) return;
-            
+            if (string.IsNullOrEmpty(s)) return;
+
             s += Environment.NewLine;
             Write(s.ToCharArray(), 0, s.Length);
         }

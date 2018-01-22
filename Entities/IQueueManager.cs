@@ -20,7 +20,7 @@ namespace Entities
 
         // todo: the use of handlers creates strong references to the subscribers
         // consider the weak event pattern
-        // https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/weak-event-patterns?view=netframework-4.7.1
+        // https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/weak-event-patterns
         //
         void Subscribe(string queuename, Func<IQueueMessage, IActionable> callback);
 

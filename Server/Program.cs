@@ -1,6 +1,6 @@
 ﻿using System;
+using Aws.ApplicationIntegration.SimpleQueueService;
 using Entities;
-using NonPersistentQueueManager;
 using Server.Details;
 
 namespace Server
@@ -11,10 +11,11 @@ namespace Server
         {
             ConsoleLogger.Init();
             ConsoleDebug.Init();
+            SqsLogger.Init();
 
             var components = ComponentFactory.CreateComponents();
             components.Get<UseCases.Server>().Start();
-            
+
             //TEST
             var qserver = new QueueServer(
                 components.Get<IListener<IDevice>>(),
