@@ -207,6 +207,21 @@ namespace Server.Adapters
         {
         }
 
+        public int Read(char[] buffer, int offset, int count)
+        {
+            var charArray = _content.ToCharArray();
+
+            int pos = 0;
+            foreach(var c in _content.ToCharArray())
+            {
+                if(pos < offset) continue;
+
+                buffer[pos-offset] = c;
+            }
+
+            return pos-offset-1;
+        }
+
         public string ReadLine()
         {
             return _content;

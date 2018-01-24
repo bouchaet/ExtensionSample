@@ -76,11 +76,10 @@ public class QueueServer : RouteServer
         }
         var data = sb.ToString();
 
-        Debug.Write($"Queue server received {data.Length} bytes" +
-            $" for queue '{queuename}'.");
-        Debug.Write($"Data: {data}");
+        Debug.Write($"Queue server received {data.ToCharArray().Length * 2}" +
+            $" bytes of data. Action: {action}."+
+            $" Destination queue: '{queuename}'. Data: {data}");
 
         return (action, queuename, data);
     }
-
 }

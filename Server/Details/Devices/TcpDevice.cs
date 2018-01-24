@@ -34,6 +34,14 @@ namespace Server.Details.Devices
             WriteLine("Welcome. Type 'admin list' to see availables commands.");
         }
 
+        public int Read(char[] buffer, int offset, int count)
+        {
+            var buf = new byte[2*count];
+            var c = _client.GetStream().Read(buf, offset*2, count*2);
+            Encoding.ASCII.GetChars(buf).CopyTo(buffer, 0);
+            return c;
+        }
+
         public string ReadLine()
         {
             var bytes = new byte[256];

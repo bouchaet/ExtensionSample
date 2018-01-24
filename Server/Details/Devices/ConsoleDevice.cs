@@ -10,6 +10,17 @@ namespace Server.Details.Devices
             Console.WriteLine("Hello");
         }
 
+        public int Read(char[] buffer, int pos, int count)
+        {
+            int c;
+            int total = 0;
+            while((c = Console.Read()) > -1 && total++ < count)
+                if(total > pos)
+                    buffer[total-1] = Convert.ToChar(c);
+
+            return total > count? count: total;
+        }
+
         public string ReadLine()
         {
             return Console.ReadLine();

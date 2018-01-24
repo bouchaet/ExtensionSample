@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
@@ -23,10 +23,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishingFacade", "Publish
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aws", "Aws\Aws.csproj", "{FE122E58-1DB0-4A56-A338-C1DFF16A217D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Http", "Http\Http.csproj", "{0F05AA32-A4D4-49CA-9785-6EA476231261}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{35E66FC6-726F-4C73-BC2F-CC8993BDB319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -69,6 +75,18 @@ Global
 		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE122E58-1DB0-4A56-A338-C1DFF16A217D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|x64.ActiveCfg = Debug|x64
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|x64.Build.0 = Debug|x64
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|x86.ActiveCfg = Debug|x86
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Debug|x86.Build.0 = Debug|x86
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|x64.ActiveCfg = Release|x64
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|x64.Build.0 = Release|x64
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|x86.ActiveCfg = Release|x86
+		{0F05AA32-A4D4-49CA-9785-6EA476231261}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
