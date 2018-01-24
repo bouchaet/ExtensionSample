@@ -34,7 +34,6 @@ namespace Server
             Debug.Write("Server is running...");
             Console.WriteLine("Press any key to quit.");
             Console.Read();
-            task.
         }
     }
 }
