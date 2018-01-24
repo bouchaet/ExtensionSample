@@ -11,12 +11,15 @@ namespace Server.Details
         {
             Logger.Singleton.Info += (source, msg) => WriteInfo(msg);
             Logger.Singleton.Warning += (source, msg) => WriteWarning(msg);
+            Logger.Singleton.Error += (source, msg) => WriteError(msg);
 
         }
 
         private static void WriteInfo(string s) => Write($"INFO {s}");
 
         private static void WriteWarning(string s) => Write($"WARNING {s}");
+
+        private static void WriteError(string s) => Write($"ERROR {s}");
 
         private static void Write(string s) =>
             Console.WriteLine($"{DateTime.Now} {s}");

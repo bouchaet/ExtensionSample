@@ -22,6 +22,9 @@ namespace Server
                 components.Get<IQueueManager>()
             );
             qserver.Start();
+
+            var httpserver = new HttpServer(10867);
+            httpserver.Start();
             //TEST
 
 
