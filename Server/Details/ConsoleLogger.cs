@@ -30,7 +30,7 @@ namespace Server.Details
     internal class ConsoleDebug
     {
         static ConsoleDebug() => Debug.Singleton.Log += (source, msg) =>
-                                   Console.WriteLine($"DEBUG: {msg}");
+                                   Console.WriteLine($"{DateTime.Now} DEBUG: {msg}");
 
         public static void Init() => new ConsoleDebug();
     }

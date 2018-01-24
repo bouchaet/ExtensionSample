@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading;
 using Aws.ApplicationIntegration.SimpleQueueService;
 using Entities;
+using Server.Adapters;
+using Server.Adapters.Http;
 using Server.Details;
 
 namespace Server
@@ -24,13 +27,14 @@ namespace Server
             qserver.Start();
 
             var httpserver = new HttpServer(10867);
-            httpserver.Start();
+            var task = httpserver.StartAsync();
             //TEST
 
 
             Debug.Write("Server is running...");
             Console.WriteLine("Press any key to quit.");
             Console.Read();
+            task.
         }
     }
 }
