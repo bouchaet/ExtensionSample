@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading;
 using Aws.ApplicationIntegration.SimpleQueueService;
 using Entities;
-using Server.Adapters;
 using Server.Adapters.Http;
 using Server.Details;
 
@@ -32,8 +30,10 @@ namespace Server
 
 
             Debug.Write("Server is running...");
-            Console.WriteLine("Press any key to quit.");
-            Console.Read();
+            Console.WriteLine("Press enter twice to exit.");
+            Console.ReadLine();
+            httpserver.Stop();
+            Console.ReadLine();
         }
     }
 }

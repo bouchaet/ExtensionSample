@@ -25,5 +25,10 @@ namespace Server.Adapters.Http
         public void SetResponse(int code, string body)
         {
         }
+
+        public override string ToString()
+        {
+            return $"{Verb} {RequestUri} {HttpVersion}";
+        }
     }
 }
