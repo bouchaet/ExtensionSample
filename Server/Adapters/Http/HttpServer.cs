@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -16,7 +15,7 @@ namespace Server.Adapters.Http
         private readonly int _port;
 
         private readonly IPAddress _ipAddress;
-        private CancellationTokenSource _cts;
+        private readonly CancellationTokenSource _cts;
 
         public HttpServer(int port)
         {
@@ -33,7 +32,7 @@ namespace Server.Adapters.Http
             _cts = new CancellationTokenSource();
         }
 
-        public async Task StartAsync()
+        public async Task Start()
         {
             var listener = new HttpListener(_ipAddress, _port);
             listener.Listen();
@@ -43,7 +42,7 @@ namespace Server.Adapters.Http
             var listening = false;
             Task<Socket> acceptAsync = null;
 
-            while (errors < 5 && !_cts.IsCancellationRequested)
+            while (!_cts.IsCancellationRequested)
             {
                 try
                 {
@@ -62,7 +61,8 @@ namespace Server.Adapters.Http
                             workerTasks.Add(Serve(acceptAsync.Result, _cts));
                     }
 
-                    foreach (var t in workerTasks.Where(t => t.IsCompleted).ToArray())
+                    foreach (var t in workerTasks.Where(
+                        t => t.IsCompleted).ToArray())
                     {
                         Debug.Write("Worker removed");
                         workerTasks.Remove(t);
@@ -108,7 +108,6 @@ namespace Server.Adapters.Http
                 var isReceiving = false;
                 while (httpClient.Connected && !cts.IsCancellationRequested)
                 {
-                    //var num = await httpClient.ReceiveAsync(bufferArr, 0);
                     var num = 0;
                     if (!isReceiving)
                     {
@@ -116,12 +115,9 @@ namespace Server.Adapters.Http
                         receiveTask = httpClient.ReceiveAsync(bufferArr, 0);
                         isReceiving = true;
                     }
-                    var tasks = new List<Task>
-                    {
-                        receiveTask,
-                        Task.Delay(5000)
-                    };
-                    await Task.WhenAny(tasks);
+
+                    await Task.WhenAny(receiveTask, Task.Delay(5000));
+
                     if (receiveTask.IsCompleted)
                     {
                         num = receiveTask.Result;
@@ -134,12 +130,13 @@ namespace Server.Adapters.Http
                         membuffer.AddRange(readbuffer.Take(num));
                         if (num < size)
                         {
-                            var request = Parse(membuffer.ToArray());
+                            var request = HttpMessageParser.Parse(membuffer.ToArray());
                             var response = await GetResponse(request);
 
                             var bytes = Encoding.ASCII.GetBytes(response);
                             var bytesArr = new ArraySegment<byte>(bytes);
                             await httpClient.SendAsync(bytesArr, 0);
+                            membuffer.Clear();
                             Debug.Write($"Http Listener sent {bytes.Length} bytes to client.");
                         }
                     }
@@ -168,9 +165,9 @@ namespace Server.Adapters.Http
             await Task.Delay(5);
 
             var response =
-                "<html><div><h2>Welcome to my http server 0.1</h2></div>"+
-                "<br>"+
-                $"<div>{request}</div></html>";
+                "<html><div><h2>Welcome to my http server 0.1</h2></div>" +
+                "<br>" +
+                $"<div><pre>{request}</pre></div></html>";
 
             return "HTTP/1.1 200 OK\r\n" +
                    "Server: ES-HttpServer v0.1\r\n" +
@@ -178,31 +175,6 @@ namespace Server.Adapters.Http
                    $"Content-Length: {response.Length}\r\n" +
                    "\r\n" +
                    response;
-        }
-
-        private IHttpRequest Parse(byte[] bytes)
-        {
-            var message = Encoding.ASCII.GetString(bytes);
-            var extract = message.Substring(0, Math.Min(message.Length, 500));
-            Debug.Write(
-                $"Parsing raw request (showing max 500 characters):" +
-                $"\r\n{extract}");
-
-            var requestline = new StringReader(message).ReadLine()?.Split(' ');
-
-            if (requestline == null || requestline.Length < 3)
-                return new HttpRequest(null)
-                {
-                    Verb = HttpVerb.Get,
-                    RequestUri = "/"
-                };
-
-            return new HttpRequest(null)
-            {
-                Verb = (HttpVerb) Enum.Parse(typeof(HttpVerb), requestline[0].Trim(), true),
-                RequestUri = requestline[1],
-                HttpVersion = requestline[2]
-            };
         }
     }
 }

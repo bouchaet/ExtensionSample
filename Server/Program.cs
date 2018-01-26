@@ -25,7 +25,7 @@ namespace Server
             qserver.Start();
 
             var httpserver = new HttpServer(10867);
-            var task = httpserver.StartAsync();
+            var task = httpserver.Start();
             //TEST
 
 

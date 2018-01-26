@@ -10,6 +10,8 @@ namespace Server.Adapters.Http
         string HttpVersion { get; }
         IEnumerable<MessageHeader> Headers { get; }
 
+        string Body { get; set; }
+
         void SetResponse(int code, string body);
     }
 }
