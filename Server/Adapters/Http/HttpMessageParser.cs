@@ -7,9 +7,14 @@ namespace Server.Adapters.Http
 {
     internal static class HttpMessageParser
     {
-        public static IHttpRequest Parse(byte[] bytes)
+        public static IHttpRequest Parse(byte[] bytes, int offset, int size)
         {
-            var message = Encoding.ASCII.GetString(bytes);
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (offset + size > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(size));
+
+            var message = Encoding.ASCII.GetString(bytes, offset, size);
             var extract = message.Substring(0, Math.Min(message.Length, 500));
             Debug.Write(
                 $"Parsing raw request (showing max 500 characters):" +

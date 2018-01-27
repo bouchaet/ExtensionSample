@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -58,7 +59,8 @@ namespace Server.Adapters.Http
                     {
                         listening = false;
                         if (acceptAsync.IsCompletedSuccessfully)
-                            workerTasks.Add(Serve(acceptAsync.Result, _cts));
+                            //workerTasks.Add(Serve(acceptAsync.Result, _cts));
+                            workerTasks.Add(ProcessConnection(acceptAsync.Result, _cts.Token));
                     }
 
                     foreach (var t in workerTasks.Where(
@@ -130,7 +132,7 @@ namespace Server.Adapters.Http
                         membuffer.AddRange(readbuffer.Take(num));
                         if (num < size)
                         {
-                            var request = HttpMessageParser.Parse(membuffer.ToArray());
+                            var request = HttpMessageParser.Parse(membuffer.ToArray(), 0, size);
                             var response = await GetResponse(request);
 
                             var bytes = Encoding.ASCII.GetBytes(response);
@@ -160,10 +162,66 @@ namespace Server.Adapters.Http
             }
         }
 
+        private Task ProcessConnection(Socket client, CancellationToken token)
+        {
+            return Task.Run(
+                () =>
+                {
+                    const int arraySize = 2048;
+                    var byteArray = new byte[arraySize];
+                    var memoryStream = new MemoryStream(arraySize);
+                    var netStream = new NetworkStream(client);
+                    using (var bufStream = new BufferedStream(netStream))
+                    {
+                        while (!token.IsCancellationRequested && client.Connected)
+                        {
+                            while (netStream.DataAvailable)
+                            {
+                                var bytesRead = netStream.Read(byteArray, 0, byteArray.Length);
+                                memoryStream.Write(byteArray, 0, bytesRead);
+                                Debug.Write($"Received {bytesRead} bytes.");
+                            }
+
+                            if (memoryStream.Position > 0)
+                            {
+                                var size = (int)memoryStream.Position;
+                                var request = HttpMessageParser.Parse(memoryStream.ToArray(), 0, size);
+                                memoryStream.Position = 0;
+
+                                var response = GetStaticResponse(request);
+                                var bytesToSend = Encoding.ASCII.GetBytes(response);
+                                bufStream.Write(bytesToSend, 0, bytesToSend.Length);
+                                bufStream.Flush();
+                            }
+
+                            const int oneSecond = 1000000;
+                            client.Poll(oneSecond, SelectMode.SelectRead);
+                        }
+                    }
+
+                    try
+                    {
+                        netStream.Close();
+                        memoryStream.Close();
+                        client.Shutdown(SocketShutdown.Both);
+                        client.Close();
+                    }
+                    catch (SocketException e)
+                    {
+                        Logger.WriteError($"Exception: {e}");
+                    }
+                });
+        }
+
         private async Task<string> GetResponse(IHttpRequest request)
         {
             await Task.Delay(5);
 
+            return GetStaticResponse(request);
+        }
+
+        private string GetStaticResponse(IHttpRequest request)
+        {
             var response =
                 "<html><div><h2>Welcome to my http server 0.1</h2></div>" +
                 "<br>" +
