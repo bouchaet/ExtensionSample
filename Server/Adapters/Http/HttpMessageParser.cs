@@ -51,7 +51,7 @@ namespace Server.Adapters.Http
             if (uri.Contains("?"))
             {
                 var questionMarkPos = uri.IndexOf("?", StringComparison.Ordinal);
-                if (uri.Substring(questionMarkPos).Length > 0)
+                if (uri.Substring(questionMarkPos).Length > 1)
                     req.AddQueryParameters(
                         uri.Split("?")[1].Split("&").Select(p => p.Split("="))
                             .Select(x => (x[0], x[1] ?? string.Empty))
