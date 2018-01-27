@@ -14,7 +14,11 @@ namespace Server.Adapters.Http
             if (offset + size > bytes.Length)
                 throw new ArgumentOutOfRangeException(nameof(size));
 
-            var message = Encoding.ASCII.GetString(bytes, offset, size);
+            var message =
+                Encoding.ASCII.GetString(
+                    bytes,
+                    offset,
+                    size); // todo: decode only startline and headers
             var extract = message.Substring(0, Math.Min(message.Length, 500));
             Debug.Write(
                 $"Parsing raw request (showing max 500 characters):" +
@@ -23,18 +27,19 @@ namespace Server.Adapters.Http
             var lines = message.Split("\r\n");
 
             if (lines.Length == 0)
-                return new HttpRequest(null);
+                return new HttpRequest();
 
             (HttpVerb verb, string uri, string version) = ParseRquestLine(lines[0]);
             var headers = lines.Skip(1)
                 .TakeWhile(line => line.Length > 0)
                 .Select(MessageHeader.From);
 
+            // todo: body must be decoded for POST and PUT only and based on header Content-Type
             var body = lines
                 .SkipWhile(line => line.Length > 0)
                 .Aggregate((cur, next) => cur + next);
 
-            return new HttpRequest(null)
+            var req = new HttpRequest()
             {
                 Verb = verb,
                 RequestUri = uri,
@@ -42,6 +47,18 @@ namespace Server.Adapters.Http
                 Headers = headers.ToArray(),
                 Body = body
             };
+
+            if (uri.Contains("?"))
+            {
+                var questionMarkPos = uri.IndexOf("?", StringComparison.Ordinal);
+                if (uri.Substring(questionMarkPos).Length > 0)
+                    req.AddQueryParameters(
+                        uri.Split("?")[1].Split("&").Select(p => p.Split("="))
+                            .Select(x => (x[0], x[1] ?? string.Empty))
+                    );
+            }
+
+            return req;
         }
 
         private static (HttpVerb, string, string) ParseRquestLine(string s)

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Entities;
@@ -20,17 +19,17 @@ namespace Server.Adapters.Http
         private bool _running;
 
         private IHttpRouteTable _routetable;
+
         public IHttpRouteTable RouteTable
         {
-            private get => _routetable;
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(RouteTable));
-                if (_running == true)
-                    throw new ApplicationException("Http server is running." +
+                if (_running)
+                    throw new ApplicationException(
+                        "Http server is running." +
                         " Cannot replace route table at this time.");
-                _routetable = value;
+
+                _routetable = value ?? throw new ArgumentNullException(nameof(RouteTable));
             }
         }
 
@@ -49,6 +48,7 @@ namespace Server.Adapters.Http
             _cts = new CancellationTokenSource();
             _running = false;
             _routetable = new HttpRouteTable();
+            _routetable.Add("/test/:entity/:id", new DebugResource());
         }
 
         public async Task Start()
@@ -111,76 +111,6 @@ namespace Server.Adapters.Http
             _cts.Cancel();
         }
 
-        private async Task Serve(Socket httpClient, CancellationTokenSource cts)
-        {
-            const int size = 1024;
-            var readbuffer = new byte[size];
-            var bufferArr = new ArraySegment<byte>(readbuffer);
-            var membuffer = new List<byte>();
-
-            try
-            {
-                httpClient.SetSocketOption(
-                    SocketOptionLevel.Socket,
-                    SocketOptionName.KeepAlive,
-                    true);
-
-                Task<int> receiveTask = null;
-                var isReceiving = false;
-                while (httpClient.Connected && !cts.IsCancellationRequested)
-                {
-                    var num = 0;
-                    if (!isReceiving)
-                    {
-                        Debug.Write("Http Listener is waiting for bytes...");
-                        receiveTask = httpClient.ReceiveAsync(bufferArr, 0);
-                        isReceiving = true;
-                    }
-
-                    await Task.WhenAny(receiveTask, Task.Delay(5000));
-
-                    if (receiveTask.IsCompleted)
-                    {
-                        num = receiveTask.Result;
-                        isReceiving = false;
-                    }
-
-                    if (num != 0)
-                    {
-                        Debug.Write($"Http Listener received {num} bytes from client.");
-                        membuffer.AddRange(readbuffer.Take(num));
-                        if (num < size)
-                        {
-                            var request = HttpMessageParser.Parse(membuffer.ToArray(), 0, size);
-                            var response = await GetResponse(request);
-
-                            var bytes = Encoding.ASCII.GetBytes(response);
-                            var bytesArr = new ArraySegment<byte>(bytes);
-                            await httpClient.SendAsync(bytesArr, 0);
-                            membuffer.Clear();
-                            Debug.Write($"Http Listener sent {bytes.Length} bytes to client.");
-                        }
-                    }
-                    else if (receiveTask.IsCompleted)
-                    {
-                        Debug.Write(
-                            $"Http Listener actively received {num} bytes" +
-                            " from client socket. Connection will be closed.");
-                        break; // nothing else to share
-                    }
-                }
-                Debug.Write("Closing connection with client.");
-                httpClient.Close();
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteError($"Connection error while serving client: {ex}");
-
-                if (httpClient.Connected)
-                    httpClient.Close();
-            }
-        }
-
         private Task ProcessConnection(Socket client, CancellationToken token)
         {
             return Task.Run(
@@ -203,9 +133,11 @@ namespace Server.Adapters.Http
 
                             if (memoryStream.Position > 0)
                             {
-                                var size = (int)memoryStream.Position;
-                                var request = HttpMessageParser.Parse(memoryStream.ToArray(), 0, size);
+                                var size = (int) memoryStream.Position;
+                                var bytes = memoryStream.GetBuffer();
                                 memoryStream.Position = 0;
+
+                                var request = HttpMessageParser.Parse(bytes, 0, size);
 
                                 var bytesToSend = MakeResponse(request);
                                 bufStream.Write(bytesToSend, 0, bytesToSend.Length);
@@ -231,44 +163,14 @@ namespace Server.Adapters.Http
                 });
         }
 
-        private async Task<string> GetResponse(IHttpRequest request)
-        {
-            await Task.Delay(5);
-
-            return GetStaticResponse(request);
-        }
-
         private byte[] MakeResponse(IHttpRequest request)
         {
-            var resource = _routetable.Find(request.RequestUri);
-            var response = resource.GetResponse(request);
+            var route = _routetable.Find(request.RequestUri);
+            request.AddPathParameters(route.PathParameters);
 
-            var startline = $"HTTP/1.1 {response.Status.Code} {response.Status.Description}\r\n";
-            var headers = response.Headers.Select(h => $"{h.Key}: {h.Value}\r\n");
-            var emptyLine = "\r\n";
-            var body = response.Body;
-
-            var bytes = Encoding
-                .ASCII
-                .GetBytes(
-                    string.Concat(new {startline, headers, emptyLine})
-                );
-            return bytes.Concat(body).ToArray();
-        }
-
-        private string GetStaticResponse(IHttpRequest request)
-        {
-            var response =
-                "<html><div><h2>Welcome to my http server 0.1</h2></div>" +
-                "<br>" +
-                $"<div><pre>{request}</pre></div></html>";
-
-            return "HTTP/1.1 200 OK\r\n" +
-                   "Server: ES-HttpServer v0.1\r\n" +
-                   "Content-Type: text/html; charset=UTF-8\r\n" +
-                   $"Content-Length: {response.Length}\r\n" +
-                   "\r\n" +
-                   response;
+            return route.Resource
+                .GetResponse(request)
+                .ToBytes();
         }
     }
 }

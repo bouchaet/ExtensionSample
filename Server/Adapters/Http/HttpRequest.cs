@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 
 namespace Server.Adapters.Http
 {
     internal class HttpRequest : IHttpRequest
     {
-        private Socket _httpClient;
         private ICollection<MessageHeader> _headers;
+        private readonly Dictionary<string, string> _pathParameters;
+        private readonly Dictionary<string, string> _queryParameters;
+
 
         public HttpVerb Verb { get; set; }
 
@@ -18,6 +19,26 @@ namespace Server.Adapters.Http
 
         public string HttpVersion { get; set; }
 
+        public void AddPathParameters(IEnumerable<(string Key, string Value)> pathParameters)
+        {
+            AddParametersTo(_pathParameters, pathParameters);
+        }
+
+        public void AddQueryParameters(IEnumerable<(string Key, string Value)> queryParameters)
+        {
+            AddParametersTo(_queryParameters, queryParameters);
+        }
+
+        private static void AddParametersTo(
+            IDictionary<string, string> target,
+            IEnumerable<(string Key, string Value)> source)
+        {
+            foreach (var param in source)
+            {
+                target.Add(param.Key, param.Value);
+            }
+        }
+
         public string Body { get; set; }
 
         public IEnumerable<MessageHeader> Headers
@@ -26,9 +47,15 @@ namespace Server.Adapters.Http
             set => _headers = new List<MessageHeader>(value);
         }
 
-        public HttpRequest(Socket httpClient)
+        public IEnumerable<(string, string)> PathParameters => _pathParameters.Select(
+            kv => (kv.Key, kv.Value));
+        public IEnumerable<(string, string)> QueryParameters => _queryParameters.Select(
+            kv => (kv.Key, kv.Value));
+
+        public HttpRequest()
         {
-            _httpClient = httpClient;
+            _pathParameters = new Dictionary<string, string>();
+            _queryParameters = new Dictionary<string, string>();
         }
 
         public void SetResponse(int code, string body)

@@ -9,9 +9,12 @@ namespace Server.Adapters.Http
         string RequestUri { get; }
         string HttpVersion { get; }
         IEnumerable<MessageHeader> Headers { get; }
+        IEnumerable<(string, string)> PathParameters { get; }
+        IEnumerable<(string, string)> QueryParameters { get; }
+
+        void AddPathParameters(IEnumerable<(string Key, string Value)> pathParameters);
+        void AddQueryParameters(IEnumerable<(string Key, string Value)> pathParameters);
 
         string Body { get; set; }
-
-        void SetResponse(int code, string body);
     }
 }
