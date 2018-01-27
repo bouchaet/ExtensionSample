@@ -17,6 +17,22 @@ namespace Server.Adapters.Http
 
         private readonly IPAddress _ipAddress;
         private readonly CancellationTokenSource _cts;
+        private bool _running;
+
+        private IHttpRouteTable _routetable;
+        public IHttpRouteTable RouteTable
+        {
+            private get => _routetable;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(RouteTable));
+                if (_running == true)
+                    throw new ApplicationException("Http server is running." +
+                        " Cannot replace route table at this time.");
+                _routetable = value;
+            }
+        }
 
         public HttpServer(int port)
         {
@@ -31,10 +47,13 @@ namespace Server.Adapters.Http
                 throw new Exception("No IPv4 address for server");
 
             _cts = new CancellationTokenSource();
+            _running = false;
+            _routetable = new HttpRouteTable();
         }
 
         public async Task Start()
         {
+            _running = true;
             var listener = new HttpListener(_ipAddress, _port);
             listener.Listen();
 
@@ -59,7 +78,6 @@ namespace Server.Adapters.Http
                     {
                         listening = false;
                         if (acceptAsync.IsCompletedSuccessfully)
-                            //workerTasks.Add(Serve(acceptAsync.Result, _cts));
                             workerTasks.Add(ProcessConnection(acceptAsync.Result, _cts.Token));
                     }
 
@@ -84,6 +102,7 @@ namespace Server.Adapters.Http
             Logger.WriteInfo($"Waiting for client termination. {workerTasks.Count} are active.");
             await Task.WhenAll(workerTasks);
             Logger.WriteInfo("Http server is done.");
+            _running = false;
         }
 
         public void Stop()
@@ -188,8 +207,7 @@ namespace Server.Adapters.Http
                                 var request = HttpMessageParser.Parse(memoryStream.ToArray(), 0, size);
                                 memoryStream.Position = 0;
 
-                                var response = GetStaticResponse(request);
-                                var bytesToSend = Encoding.ASCII.GetBytes(response);
+                                var bytesToSend = MakeResponse(request);
                                 bufStream.Write(bytesToSend, 0, bytesToSend.Length);
                                 bufStream.Flush();
                             }
@@ -218,6 +236,24 @@ namespace Server.Adapters.Http
             await Task.Delay(5);
 
             return GetStaticResponse(request);
+        }
+
+        private byte[] MakeResponse(IHttpRequest request)
+        {
+            var resource = _routetable.Find(request.RequestUri);
+            var response = resource.GetResponse(request);
+
+            var startline = $"HTTP/1.1 {response.Status.Code} {response.Status.Description}\r\n";
+            var headers = response.Headers.Select(h => $"{h.Key}: {h.Value}\r\n");
+            var emptyLine = "\r\n";
+            var body = response.Body;
+
+            var bytes = Encoding
+                .ASCII
+                .GetBytes(
+                    string.Concat(new {startline, headers, emptyLine})
+                );
+            return bytes.Concat(body).ToArray();
         }
 
         private string GetStaticResponse(IHttpRequest request)
