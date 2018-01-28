@@ -8,12 +8,14 @@ namespace Server.Adapters.Http
     internal class HttpRouteTable : IHttpRouteTable
     {
         private readonly IDictionary<string, HttpRoute> _routeTable;
-        private Resource NullResouce { get; }
+        private Resource NullResource { get; }
+        private const string Any = "*";
+        private const string ParamPrefix = ":";
 
         public HttpRouteTable()
         {
             _routeTable = new Dictionary<string, HttpRoute>();
-            NullResouce = new NullResource();
+            NullResource = new NullResource();
         }
 
         public void Add(string relativePath, Resource resource)
@@ -24,7 +26,7 @@ namespace Server.Adapters.Http
                     $"Must be a relative path that starts with '/'");
 
             var (pathParameters, normalizedPath) = NormalizePath(relativePath);
-            var route = HttpRoute.Make(resource, pathParameters.ToDictionary(p => p), null);
+            var route = HttpRoute.Make(resource, pathParameters.ToDictionary(p => p));
 
             if (_routeTable.ContainsKey(normalizedPath))
                 _routeTable[normalizedPath] = route;
@@ -35,7 +37,7 @@ namespace Server.Adapters.Http
         public HttpRoute Find(string relativePath)
         {
             if (string.IsNullOrEmpty(relativePath))
-                return HttpRoute.Make(NullResouce, null, null);
+                return HttpRoute.Make(NullResource, null);
 
             return (from r in _routeTable
                        let m = Match(r.Key, relativePath)
@@ -43,9 +45,9 @@ namespace Server.Adapters.Http
                        let pathKeyValues = r.Value.PathParameters.Select(
                                (kv, i) => new {Value = kv, Index = i})
                            .ToDictionary(it => it.Value.key, it => m.PathParameterValues[it.Index])
-                       select HttpRoute.Make(r.Value.Resource, pathKeyValues, null))
+                       select HttpRoute.Make(r.Value.Resource, pathKeyValues))
                    .FirstOrDefault() ??
-                   HttpRoute.Make(NullResouce, null, null);
+                   HttpRoute.Make(NullResource, null);
         }
 
         private static (bool IsEqual, string[] PathParameterValues) Match(string lhs, string rhs)
@@ -61,7 +63,7 @@ namespace Server.Adapters.Http
             var pathValues = new List<string>();
             for (var i = 0; i < lhsParts.Length; i++)
             {
-                if (lhsParts[i] == "*")
+                if (lhsParts[i] == Any)
                 {
                     pathValues.Add(rhsParts[i]);
                     continue;
@@ -91,17 +93,17 @@ namespace Server.Adapters.Http
             if (parts.Length == 0)
                 return (EmptyParams, trimmedPath);
 
-            if (!parts.Any(p => p.StartsWith(":")))
+            if (!parts.Any(p => p.StartsWith(ParamPrefix)))
                 return (EmptyParams, trimmedPath);
 
             var pathParams = new List<string>();
             var sb = new StringBuilder();
             foreach (var p in parts)
             {
-                if (p.StartsWith(":"))
+                if (p.StartsWith(ParamPrefix))
                 {
                     pathParams.Add(p.Substring(1));
-                    sb.Append("/*");
+                    sb.Append($"/{Any}");
                     continue;
                 }
 
