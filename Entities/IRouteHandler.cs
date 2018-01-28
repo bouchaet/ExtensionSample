@@ -4,6 +4,6 @@ namespace Entities
 {
     public interface IRouteHandler
     {
-        Func<string, string> Handler { get; }
+        object Map(object input);
     }
 }

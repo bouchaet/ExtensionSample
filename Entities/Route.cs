@@ -1,6 +1,6 @@
 namespace Entities
 {
-    internal class Route
+    internal class Route : IRoute
     {
         private string _source;
         private IRouteHandler _handler;

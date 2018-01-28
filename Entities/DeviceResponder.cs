@@ -12,7 +12,11 @@ internal class DeviceResponder : Port<IDevice>
     protected override void PostReceive(IDevice d)
     {
         var input = d.ReadLine();
-        d.WriteLine(_router?.GetHandler(input)?.Handler?.Invoke(input));
+        
+        d.WriteLine(_router?
+            .GetHandler(input)?
+            .Map(input)?
+            .ToString());
     }
 
     protected override void PostTransfer(IDevice d)

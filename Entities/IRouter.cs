@@ -2,16 +2,16 @@ using System;
 
 namespace Entities
 {
-    public interface IRouter
+    public interface IRouter : IRouteTable
     {
-        void AddRoute(string name, Func<string, string> handler);
+        void Add(string name, Func<string, string> handler);
         IRouteHandler GetHandler(string route);
     }
 
-    public interface IRouteTable<THandler>
+    public interface IRouteTable
     {
-        void Add(string relativePath, THandler handler);
-        THandler Find(string relativePath);
-        void Remove(string relativePath);
+        void Add(string routeName, IRoute route);
+        IRoute Find(string routeName);
+        void Remove(string relativePath);        
     }
 }

@@ -10,7 +10,7 @@ public class QueueServer : RouteServer
     private const string SERVER_ERROR = "SERVER_ERROR";
 
     public QueueServer(IListener<IDevice> listener, IQueueManager mgr)
-    : base(listener, new QueueProtocol())
+    : base(listener)
     {
         listener.Configure("port", 10865);
         _mgr = mgr;

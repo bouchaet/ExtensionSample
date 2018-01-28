@@ -32,7 +32,7 @@ namespace Entities
 
         public void Add(string routename, Func<string, string> routeHandler)
         {
-            _router.AddRoute(routename, routeHandler);
+            _router.Add(routename, routeHandler);
         }
     }
 }

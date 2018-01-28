@@ -30,17 +30,16 @@ namespace Server.Adapters.Http
             }
         }
 
-        private static int GetPort =>
+        private static int GetConfiguredPort =>
             int.TryParse(Environment.GetEnvironmentVariable("es.httpserver.port"), out int port)
                 ? port
-                 :10867;
+                : 10867;
                  
-        public TcpSocketHttpServer() : base(GetPort)
+        public TcpSocketHttpServer() : this(GetConfiguredPort)
         {  }
 
         public TcpSocketHttpServer(int port) : base(port)
         {
-            _port = port;
             var hostName = Dns.GetHostName();
             var ipHostInfo = Dns.GetHostEntry(hostName);
 
@@ -59,7 +58,7 @@ namespace Server.Adapters.Http
         public override async Task Start()
         {
             _running = true;
-            var listener = new HttpListener(_ipAddress, _port);
+            var listener = new HttpListener(_ipAddress, Port);
             listener.Listen();
 
             var errors = 0;

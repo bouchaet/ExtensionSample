@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Entities;
 using Entities.Http;
 
 namespace Server.Adapters.Http
@@ -122,6 +123,11 @@ namespace Server.Adapters.Http
         public void Add(string relativePath, HttpRoute handler)
         {
             Add(relativePath, handler.Resource);
+        }
+
+        public void Add(string routeName, IRoute route)
+        {
+            throw new NotImplementedException();
         }
     }
 }

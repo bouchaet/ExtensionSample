@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Entities.Http
 {
-    public class HttpRoute
+    public class HttpRoute : IRoute
     {
+        public string Name => Resource.GetType().Name;
+
         public Resource Resource { get; private set; }
+
+        public IRouteHandler Handler 
+            => Resource.ToRouteHandler();
+
         private IDictionary<string, string> _pathParameters;
 
         public static HttpRoute Make(

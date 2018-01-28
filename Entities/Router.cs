@@ -13,8 +13,13 @@ namespace Entities
             Routes = new List<Route>();
         }
 
-        public void AddRoute(string name, Func<string, string> handler) => 
+        public void Add(string name, Func<string, string> handler) => 
             Routes.Add(new Route(name, new RouteHandler { Handler = handler }));
+
+        public IRoute Find(string routeName)
+        {
+            return new Route(routeName, GetHandler(routeName));
+        }
 
         public IRouteHandler GetHandler(string route)
         {
@@ -25,6 +30,16 @@ namespace Entities
                 return Routes.First(r => r.Name == "*").Handler;
 
             return new RouteHandler { Handler = (str) => "Not Found" };
+        }
+
+        public void Add(string relativePath, IRoute route)
+        {
+            Add(relativePath, s => route.Handler.Map(s).ToString());
+        }
+
+        public void Remove(string relativePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

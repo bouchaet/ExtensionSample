@@ -9,8 +9,9 @@ namespace Entities.Http
         public bool IsRunning => _running;
         public abstract Task Start();
         public abstract void Stop();
+        public int Port => _port;
 
-        protected int _port;
+        private int _port;
         protected bool _running;
         protected HttpServer(int port)
         {
