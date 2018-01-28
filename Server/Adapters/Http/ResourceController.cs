@@ -1,8 +1,10 @@
+using System;
+using Entities;
 using Entities.Http;
 
 namespace Server.Adapters.Http
 {
-    internal class ResourceController : Resource
+    internal class ResourceController
     {
         private Resource _inner;
         public ResourceController(Resource inner)
@@ -10,35 +12,19 @@ namespace Server.Adapters.Http
             _inner = inner;
         }
 
-        public override (int status, string content) Delete(IHttpRequest request)
-        => _inner.Delete(request);
-
-        public override (int status, string content) Get(IHttpRequest request)
-        => _inner.Get(request);
-
-        public override (int status, string content) Post(IHttpRequest request)
-        => _inner.Post(request);
-
-        public override (int status, string content) Put(IHttpRequest request)
-        => _inner.Put(request);
-
         internal IHttpResponse GetResponse(IHttpRequest request)
         {
             if (request == null)
                 return new HttpResponse(HttpStatusCode.BadRequest);
 
-            switch (request.Method)
+            try
             {
-                case "GET":
-                    return Make(Get(request));
-                case "POST":
-                    return Make(Post(request));
-                case "PUT":
-                    return Make(Put(request));
-                case "DELETE":
-                    return Make(Delete(request));
-                default:
-                    return new HttpResponse(HttpStatusCode.BadRequest);
+                return Make(_inner.Map(request));
+            }
+            catch(ApplicationException ex)
+            {
+                Debug.Write($"Exception: {ex}");
+                return new HttpResponse(HttpStatusCode.BadRequest);
             }
         }
 

@@ -4,12 +4,12 @@ namespace Entities.Http
 {
     public abstract class Resource
     {
-        public abstract (int status, string content) Get(IHttpRequest request);
-        public abstract (int status, string content) Post(IHttpRequest request);
-        public abstract (int status, string content) Put(IHttpRequest request);
-        public abstract (int status, string content) Delete(IHttpRequest request);
+        protected abstract (int status, string content) Get(IHttpRequest request);
+        protected abstract (int status, string content) Post(IHttpRequest request);
+        protected abstract (int status, string content) Put(IHttpRequest request);
+        protected abstract (int status, string content) Delete(IHttpRequest request);
 
-        internal (int status, string content) Map(IHttpRequest request)
+        public (int status, string content) Map(IHttpRequest request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
