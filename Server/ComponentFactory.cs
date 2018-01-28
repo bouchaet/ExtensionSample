@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BfmEvent.Details;
 using Entities;
+using Entities.Http;
 using JournalEntry.Adapters;
 using JournalEntry.Details;
 using JournalEntry.UseCases;
@@ -11,6 +12,7 @@ using NonPersistentQueueManager;
 using Server.Details.Dependency;
 using Server.Details.Devices;
 using Server.Details.Ports;
+using Server.Adapters.Http;
 
 namespace Server
 {
@@ -54,6 +56,8 @@ namespace Server
                 containerBuilder.Get<IQueueFactory>(),
                 new Dictionary<string, IQueue>()
             );
+
+            containerBuilder.Set<HttpServer>().To<TcpSocketHttpServer>();
 
             return containerBuilder;
         }

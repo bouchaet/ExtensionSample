@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Entities;
+using Entities.Http;
 
 namespace Server.Adapters.Http
 {
@@ -44,7 +45,7 @@ namespace Server.Adapters.Http
                 Verb = verb,
                 RequestUri = uri,
                 HttpVersion = version,
-                Headers = headers.ToArray(),
+                MessageHeaders = headers.ToArray(),
                 Body = body
             };
 

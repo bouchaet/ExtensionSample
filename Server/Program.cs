@@ -1,6 +1,7 @@
 ﻿using System;
 using Aws.ApplicationIntegration.SimpleQueueService;
 using Entities;
+using Entities.Http;
 using Server.Adapters.Http;
 using Server.Details;
 
@@ -24,7 +25,10 @@ namespace Server
             );
             qserver.Start();
 
-            var httpserver = new HttpServer(10867);
+            var routetable = new HttpRouteTable();
+            routetable.Add("/test/:testname", new DebugResource());
+            var httpserver = components.Get<HttpServer>();
+            httpserver.RouteTable = routetable;
             var task = httpserver.Start();
             //TEST
 

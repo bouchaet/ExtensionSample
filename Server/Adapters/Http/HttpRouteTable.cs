@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Entities.Http;
 
 namespace Server.Adapters.Http
 {
@@ -116,6 +117,11 @@ namespace Server.Adapters.Http
         public void Remove(string relativePath)
         {
             throw new NotImplementedException();
+        }
+
+        public void Add(string relativePath, HttpRoute handler)
+        {
+            Add(relativePath, handler.Resource);
         }
     }
 }

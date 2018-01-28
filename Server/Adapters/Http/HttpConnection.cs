@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Entities;
+using Entities.Http;
 
 namespace Server.Adapters.Http
 {
@@ -77,6 +78,7 @@ namespace Server.Adapters.Http
             request.AddPathParameters(route.PathParameters);
 
             return route.Resource
+                .ToController()
                 .GetResponse(request)
                 .ToBytes();
         }
