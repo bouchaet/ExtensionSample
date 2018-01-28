@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Entities.Http;
 
 namespace Server.Adapters.Http
 {
@@ -13,7 +14,9 @@ namespace Server.Adapters.Http
 
         public HttpVerb Verb { get; set; }
 
-        public string MessageBody { get; set; }
+        public string Method { get => Enum.GetName(typeof(HttpVerb), Verb).ToUpper(); }
+
+        public string Body { get; set; }
 
         public string RequestUri { get; set; }
 
@@ -39,13 +42,14 @@ namespace Server.Adapters.Http
             }
         }
 
-        public string Body { get; set; }
-
-        public IEnumerable<MessageHeader> Headers
+        public IEnumerable<MessageHeader> MessageHeaders
         {
             get => _headers;
             set => _headers = new List<MessageHeader>(value);
         }
+
+        public IEnumerable<(string, string)> Headers => _headers.Select(
+            x => (x.Key, x.Value));
 
         public IEnumerable<(string, string)> PathParameters => _pathParameters.Select(
             kv => (kv.Key, kv.Value));

@@ -9,18 +9,15 @@ namespace Entities
         private IListener<IDevice> _listener;
 
         protected RouteServer(IRouter router,
-            IListener<IDevice> listener,
-            ListenerProtocol protocol)
+            IListener<IDevice> listener)
         {
             _router = router ?? new Router();
             _listener = listener;
-            _listener.ListenerProtocol = protocol;
             _listener.OutPort.Connect(new DeviceResponder(_router));
         }
 
-        protected RouteServer(IListener<IDevice> listener,
-            ListenerProtocol protocol)
-            : this(new Router(), listener, protocol)
+        protected RouteServer(IListener<IDevice> listener)
+            : this(new Router(), listener)
         { }
 
         public void Start()

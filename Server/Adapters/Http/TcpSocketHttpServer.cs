@@ -1,26 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Entities;
+using Entities.Http;
 
 namespace Server.Adapters.Http
 {
-    internal class HttpServer
+    internal class TcpSocketHttpServer : HttpServer
     {
-        private readonly int _port;
-
         private readonly IPAddress _ipAddress;
         private readonly CancellationTokenSource _cts;
-        private bool _running;
 
         private IHttpRouteTable _routetable;
 
-        public IHttpRouteTable RouteTable
+        public override IHttpRouteTable RouteTable
         {
             set
             {
@@ -33,9 +30,15 @@ namespace Server.Adapters.Http
             }
         }
 
-        public bool IsRunning => _running;
+        private static int GetPort =>
+            int.TryParse(Environment.GetEnvironmentVariable("es.httpserver.port"), out int port)
+                ? port
+                 :10867;
+                 
+        public TcpSocketHttpServer() : base(GetPort)
+        {  }
 
-        public HttpServer(int port)
+        public TcpSocketHttpServer(int port) : base(port)
         {
             _port = port;
             var hostName = Dns.GetHostName();
@@ -53,7 +56,7 @@ namespace Server.Adapters.Http
             _routetable.Add("/test/:entity/:id", new DebugResource());
         }
 
-        public async Task Start()
+        public override async Task Start()
         {
             _running = true;
             var listener = new HttpListener(_ipAddress, _port);
@@ -111,7 +114,7 @@ namespace Server.Adapters.Http
             _running = false;
         }
 
-        public void Stop()
+        public override void Stop()
         {
             Debug.Write("Http server shutdown requested.");
             _cts.Cancel();

@@ -6,5 +6,8 @@
     {
         Port<TIn> InPort { get; }
         Port<TOut> OutPort { get; }
+
+        void ConnectFrom(Port<TIn> source);
+        void ConnectTo(Port<TOut> target);
     }
 }

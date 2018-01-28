@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Server.Adapters.Http
+namespace Entities.Http
 {
-    internal class HttpRoute
+    public class HttpRoute
     {
         public Resource Resource { get; private set; }
         private IDictionary<string, string> _pathParameters;
