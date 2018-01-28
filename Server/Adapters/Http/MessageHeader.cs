@@ -2,7 +2,7 @@
 
 namespace Server.Adapters.Http
 {
-    public class MessageHeader
+    internal class MessageHeader
     {
         public string Key { get; private set; }
         public string Value { get; private set; }
