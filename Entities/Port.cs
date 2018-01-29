@@ -10,6 +10,7 @@ namespace Entities
 
         public event EventHandler<T> OnDataSent;
         public event EventHandler<T> OnDataReceived;
+        public event EventHandler<Port<T>> OnConnected;
         public event Action<T> OnDataSentAsync;
         public event Action<T> OnDataReceivedAsync;
 
@@ -22,6 +23,8 @@ namespace Entities
         {
             if (!_ports.Contains(port))
                 _ports.Add(port);
+            
+            port.OnConnected(port, this);
         }
 
         protected abstract void PreTransfer(T data);
