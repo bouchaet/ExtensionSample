@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Entities;
@@ -15,11 +16,12 @@ namespace Server.Adapters.Http
             if (offset + size > bytes.Length)
                 throw new ArgumentOutOfRangeException(nameof(size));
 
+            // todo: decode only startline and headers (end-of-header)
+            var emptyLinePosition = FindEmptyLine(bytes, offset, size);
+            Debug.Write($"Empty line found at position {emptyLinePosition}");
+
             var message =
-                Encoding.ASCII.GetString(
-                    bytes,
-                    offset,
-                    size); // todo: decode only startline and headers
+                Encoding.ASCII.GetString(bytes, offset, emptyLinePosition + 1);
             var extract = message.Substring(0, Math.Min(message.Length, 500));
             Debug.Write(
                 $"Parsing raw request (showing max 500 characters):" +
@@ -36,10 +38,16 @@ namespace Server.Adapters.Http
                 .Select(MessageHeader.From);
 
             // todo: body must be decoded for POST and PUT only and based on header Content-Type
-            var body = lines
-                .SkipWhile(line => line.Length > 0)
-                .Aggregate((cur, next) => cur + next);
-
+            // var body = lines
+            //     .SkipWhile(line => line.Length > 0)
+            //     .Aggregate((cur, next) => cur + next);
+            var bodyPosition = emptyLinePosition + 2; //skip CRLF - 2 bytes
+            var bodySize = size - bodyPosition - 1;
+            var body = bodySize > 0
+                ? Encoding.ASCII.GetString(bytes, bodyPosition, bodySize)
+                : string.Empty;
+            Debug.Write($"Body position and size: ({bodyPosition}, {bodySize})");
+            
             var req = new HttpRequest()
             {
                 Verb = verb,
@@ -48,18 +56,40 @@ namespace Server.Adapters.Http
                 MessageHeaders = headers.ToArray(),
                 Body = body
             };
+            req.AddPathParameters(ParseQueryParameters(uri));
 
+            return req;
+        }
+
+        private static IEnumerable<(string Key, string Value)> ParseQueryParameters(string uri)
+        {
             if (uri.Contains("?"))
             {
                 var questionMarkPos = uri.IndexOf("?", StringComparison.Ordinal);
-                if (uri.Substring(questionMarkPos).Length > 1)
-                    req.AddQueryParameters(
-                        uri.Split("?")[1].Split("&").Select(p => p.Split("="))
+                return uri.Substring(questionMarkPos).Length > 1
+                    ? uri.Split("?")[1].Split("&").Select(p => p.Split("="))
                             .Select(x => (x[0], x[1] ?? string.Empty))
-                    );
+                    : Enumerable.Empty<(string,string)>();
             }
+            return Enumerable.Empty<(string,string)>();
+        }
 
-            return req;
+        private static int FindEmptyLine(byte[] bytes, int offset, int size)
+        {
+            var TwoCrLf = new byte[4] { 0x13, 0x10, 0x13, 0x10 };
+            var movingBytes = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
+            byte[] tempArray = new byte[4];
+            return bytes.Skip(offset).Take(size).TakeWhile(
+                x =>
+                {
+                    // shift left
+                    Array.Copy(movingBytes, 0, tempArray, 0, 4);
+                    Array.Copy(tempArray, 1, movingBytes, 0, 3);
+                    movingBytes[3] = x;
+
+                    return !movingBytes.SequenceEqual(TwoCrLf);
+                })
+                .Count() - 1;
         }
 
         private static (HttpVerb, string, string) ParseRquestLine(string s)
@@ -70,7 +100,7 @@ namespace Server.Adapters.Http
             var parts = s.Split(' ');
 
             return (
-                (HttpVerb) Enum.Parse(typeof(HttpVerb), parts[0], true),
+                (HttpVerb)Enum.Parse(typeof(HttpVerb), parts[0], true),
                 parts.Length > 1 ? parts[1] : string.Empty,
                 parts.Length > 2 ? parts[2] : string.Empty
                 );

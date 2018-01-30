@@ -21,10 +21,12 @@ namespace Entities
 
         public void Connect(Port<T> port)
         {
+            if(port == null) return;
+
             if (!_ports.Contains(port))
                 _ports.Add(port);
             
-            port.OnConnected(port, this);
+            port.OnConnected?.Invoke(port, this);
         }
 
         protected abstract void PreTransfer(T data);
