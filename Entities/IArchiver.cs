@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JournalEntry.UseCases
+namespace Entities
 {
     public interface IArchiver<T>
     {

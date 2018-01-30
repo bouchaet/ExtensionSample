@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Aws.Database.DynamoDb;
 using BfmEvent.Details;
 using Entities;
 using Entities.Http;
@@ -28,7 +29,8 @@ namespace Server
             containerBuilder.Set<Port<string>>().To<StringPort>();
             containerBuilder.Set<IMapper<JournalEntry.UseCases.JournalEntry, PartnerGlEntry>>()
                 .To<Mapper>();
-            containerBuilder.Set<IArchiver<Entities.BfmEvent>>().To<InMemoryArchiver>();
+            //containerBuilder.Set<IArchiver<Entities.BfmEvent>>().To<InMemoryArchiver>();
+            containerBuilder.Set<IArchiver<Entities.BfmEvent>>().To<DynamoDbArchiver>();
             containerBuilder.Set<Port<Entities.BfmEvent>>().To<BfmEventPort>();
             containerBuilder.Set<IDeserializer<Entities.BfmEvent>>().To<TokenDeserializer>();
             containerBuilder.Set<IInfoServicesGateway>().To<InMemoryInfoSvcGateway>();
