@@ -6,6 +6,18 @@ namespace Server.Adapters.Http
     internal class DebugResource : Resource
     {
         protected override (int status, string content) Get(IHttpRequest request)
+            => MakeDebugInfo(request);
+
+        protected override (int status, string content) Post(IHttpRequest request)
+            => MakeDebugInfo(request);
+
+        protected override (int status, string content) Put(IHttpRequest request)
+            => MakeNotFound;
+
+        protected override (int status, string content) Delete(IHttpRequest request)
+            => MakeNotFound;
+
+        private static (int status, string content) MakeDebugInfo(IHttpRequest request)
         {
             var html = "<html><div><h2>Welcome to ES http server v0.1</h2></div>" +
                        "<br>" +
@@ -20,16 +32,7 @@ namespace Server.Adapters.Http
 
             return (200, html);
         }
-
-        protected override (int status, string content) Post(IHttpRequest request)
-            => MakeNotFound;
-
-        protected override (int status, string content) Put(IHttpRequest request)
-            => MakeNotFound;
-
-        protected override (int status, string content) Delete(IHttpRequest request)
-            => MakeNotFound;
-
+        
         private static (int, string) MakeNotFound => (200, "Not Found");
     }
 }

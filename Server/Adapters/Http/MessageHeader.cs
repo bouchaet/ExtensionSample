@@ -14,7 +14,7 @@ namespace Server.Adapters.Http
             return new MessageHeader
             {
                 Key = kv[0],
-                Value = kv[1] ?? string.Empty
+                Value = kv.Length > 1 ? kv[1] : string.Empty
             };
         }
 
