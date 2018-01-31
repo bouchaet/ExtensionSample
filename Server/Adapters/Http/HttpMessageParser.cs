@@ -90,6 +90,7 @@ namespace Server.Adapters.Http
 
         private static int FindEmptyLine(byte[] bytes, int offset, int size)
         {
+            // todo: implement Rabin-Karp with Rabin fingerprint instead
             var TwoCrLf = new byte[4] { 0b00001101, 0b00001010, 0b00001101, 0b00001010 };
             var movingBytes = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
             byte[] tempArray = new byte[4];
