@@ -25,30 +25,46 @@ namespace Aws.ApplicationIntegration.SimpleQueueService
 
         private static AmazonSQSClient GetClient()
         {
-            AWSConfigs.RegionEndpoint = LoggerRegion;
-            var chain = new CredentialProfileStoreChain();
-            return !chain.TryGetAWSCredentials(ProfileName, out AWSCredentials credentials)
-                ? null
-                : new AmazonSQSClient(credentials);
+            try
+            {
+                AWSConfigs.RegionEndpoint = LoggerRegion;
+                var chain = new CredentialProfileStoreChain();
+                return !chain.TryGetAWSCredentials(ProfileName, out AWSCredentials credentials)
+                    ? null
+                    : new AmazonSQSClient(credentials);
+             }
+             catch(Exception ex)
+             {
+                 Logger.WriteError($"Exception while building AWS SQS client: {ex}");
+                 return null; 
+             }
         }
 
         private static void RefreshProfile()
         {
-            var netSdkFile = new NetSDKCredentialsFile();
-            netSdkFile.TryGetProfile(ProfileName, out CredentialProfile loggerProfile);
+            try
+            {
+                var netSdkFile = new NetSDKCredentialsFile();
+                netSdkFile.TryGetProfile(ProfileName, out CredentialProfile loggerProfile);
 
-            if (loggerProfile == null)
-                loggerProfile = new CredentialProfile(
-                    ProfileName,
-                    new CredentialProfileOptions());
+                if (loggerProfile == null)
+                    loggerProfile = new CredentialProfile(
+                        ProfileName,
+                        new CredentialProfileOptions());
 
-            loggerProfile.Options.AccessKey =
-                Environment.GetEnvironmentVariable("es.sqs.useraccesskey");
-            loggerProfile.Options.SecretKey =
-                Environment.GetEnvironmentVariable("es.sqs.usersecretkey");
-            loggerProfile.Region = LoggerRegion;
+                loggerProfile.Options.AccessKey =
+                    Environment.GetEnvironmentVariable("es.sqs.useraccesskey");
+                loggerProfile.Options.SecretKey =
+                    Environment.GetEnvironmentVariable("es.sqs.usersecretkey");
+                loggerProfile.Region = LoggerRegion;
 
-            netSdkFile.RegisterProfile(loggerProfile);
+                netSdkFile.RegisterProfile(loggerProfile);                
+            }
+            catch (System.Exception e)
+            {
+                Entities.Logger.WriteError($"Exception while building AWS profile: {e}");
+            }
+
         }
 
         private static void Write(string s)
