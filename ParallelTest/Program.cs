@@ -6,9 +6,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Algo.CS.Math.IntegerSequence;
+using static Algo;
 
-namespace ParaPerf
+namespace ParallelTest
 {
     static class Program
     {

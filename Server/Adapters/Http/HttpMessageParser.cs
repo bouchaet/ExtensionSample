@@ -96,44 +96,10 @@ namespace Server.Adapters.Http
 
         private static int FindEmptyLine(byte[] bytes, int offset, int size)
         {
-            // todo: implement Rabin-Karp with Rabin fingerprint instead
-            //var TwoCrLf = new byte[4] {0b00001101, 0b00001010, 0b00001101, 0b00001010};
-            //var movingBytes = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
-            //byte[] tempArray = new byte[4];
-            //return bytes.Skip(offset).Take(size).TakeWhile(
-            //    x =>
-            //    {
-            //        // shift left
-            //        Array.Copy(movingBytes, 0, tempArray, 0, 4);
-            //        Array.Copy(tempArray, 1, movingBytes, 0, 3);
-            //        movingBytes[3] = x;
-
-            //        return !movingBytes.SequenceEqual(TwoCrLf);
-            //    })
-            //    .Count() - 1;
-
-            return NaiveSearch(
+            return Algo.NaiveSearch(
                 new ArraySegment<byte>(bytes, offset, size),
                 new byte[]{0x0D, 0x0A, 0x0D, 0x0A}
             );
-        }
-
-        private static int NaiveSearch(IReadOnlyList<byte> source, IReadOnlyList<byte> pattern)
-        {
-            var n = source.Count - 1;
-            var m = pattern.Count - 1;
-
-            for (var i = 0; i <= n - m + 1; i++)
-            {
-                for (var j = 0; j <= m; j++)
-                {
-                    if (source[i + j] != pattern[j])
-                        break;
-                    if(j == m)
-                        return i;
-                }
-            }
-            return -1;
         }
 
         private static (HttpVerb, string, string) ParseRequestLine(string s)

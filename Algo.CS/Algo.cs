@@ -5,7 +5,10 @@ using System.Linq;
 public static class Algo
 {
     #region Sequence Search
-
+    /// <summary>
+    /// Search for a pattern in an array of bytes.
+    /// Returns the index of the pattern when found or -1 otherwise.
+    /// </summary>
     public static int NaiveSearch(IReadOnlyList<byte> source, IReadOnlyList<byte> pattern)
     {
         var n = source.Count - 1;
@@ -28,6 +31,10 @@ public static class Algo
 
     #region Integer Series
 
+    /// <summary>
+    /// Naive implementation of Fibonnacci serie using the iterative approach.
+    /// (no recursion)
+    /// </summary>
     public static long Fibon(int n)
     {
         if (n < 0) throw new ArgumentOutOfRangeException(nameof(n));
