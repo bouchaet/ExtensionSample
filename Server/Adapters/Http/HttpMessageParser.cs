@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Entities;
 using Entities.Http;
 
@@ -17,7 +18,7 @@ namespace Server.Adapters.Http
                 throw new ArgumentOutOfRangeException(nameof(size));
 
             var emptyLinePosition = FindEmptyLine(bytes, offset, size);
-            var headerBlock = Encoding.ASCII.GetString(bytes, offset, emptyLinePosition - 1);
+            var headerBlock = Encoding.ASCII.GetString(bytes, offset, emptyLinePosition);
             var lines = headerBlock.Split("\r\n");
 
             LogFirstLines(headerBlock, emptyLinePosition);
@@ -27,11 +28,15 @@ namespace Server.Adapters.Http
                 : new HttpRequest(); // is that enough?
         }
 
-        private static HttpRequest BuildRequest(byte[] bytes, int size, int emptyLinePosition, string[] lines)
+        private static HttpRequest BuildRequest(
+            byte[] bytes,
+            int size,
+            int emptyLinePosition,
+            IReadOnlyList<string> lines)
         {
             (HttpVerb verb, string uri, string version) = ParseRequestLine(lines[0]);
             var headers = ParseHeaders(lines.Skip(1));
-            string body = ParseBody(bytes, size, emptyLinePosition);
+            var body = ParseBody(bytes, size, emptyLinePosition);
 
             var req = new HttpRequest()
             {
@@ -50,8 +55,9 @@ namespace Server.Adapters.Http
             Debug.Write($"Empty line found at position {emptyLinePosition}");
 
             var extract = firstLines.Substring(0, Math.Min(firstLines.Length, 500));
-            Debug.Write($"Parsing raw request (showing max 500 characters):" +
-                        $"\r\n{extract}");
+            Debug.Write(
+                $"Parsing raw request (showing max 500 characters):" +
+                $"\r\n{extract}");
         }
 
         private static IEnumerable<MessageHeader> ParseHeaders(IEnumerable<string> lines)
@@ -67,7 +73,7 @@ namespace Server.Adapters.Http
             // var body = lines
             //     .SkipWhile(line => line.Length > 0)
             //     .Aggregate((cur, next) => cur + next);
-            var bodyPosition = emptyLinePosition + 2; //skip CRLF - 2 bytes
+            var bodyPosition = emptyLinePosition + 4; //skip CR LF CR LF so 4 bytes
             var bodySize = size - bodyPosition;
             var body = bodySize > 0
                 ? Encoding.ASCII.GetString(bytes, bodyPosition, bodySize)
@@ -91,20 +97,43 @@ namespace Server.Adapters.Http
         private static int FindEmptyLine(byte[] bytes, int offset, int size)
         {
             // todo: implement Rabin-Karp with Rabin fingerprint instead
-            var TwoCrLf = new byte[4] { 0b00001101, 0b00001010, 0b00001101, 0b00001010 };
-            var movingBytes = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
-            byte[] tempArray = new byte[4];
-            return bytes.Skip(offset).Take(size).TakeWhile(
-                x =>
-                {
-                    // shift left
-                    Array.Copy(movingBytes, 0, tempArray, 0, 4);
-                    Array.Copy(tempArray, 1, movingBytes, 0, 3);
-                    movingBytes[3] = x;
+            //var TwoCrLf = new byte[4] {0b00001101, 0b00001010, 0b00001101, 0b00001010};
+            //var movingBytes = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
+            //byte[] tempArray = new byte[4];
+            //return bytes.Skip(offset).Take(size).TakeWhile(
+            //    x =>
+            //    {
+            //        // shift left
+            //        Array.Copy(movingBytes, 0, tempArray, 0, 4);
+            //        Array.Copy(tempArray, 1, movingBytes, 0, 3);
+            //        movingBytes[3] = x;
 
-                    return !movingBytes.SequenceEqual(TwoCrLf);
-                })
-                .Count() - 1;
+            //        return !movingBytes.SequenceEqual(TwoCrLf);
+            //    })
+            //    .Count() - 1;
+
+            return NaiveSearch(
+                new ArraySegment<byte>(bytes, offset, size),
+                new byte[]{0x0D, 0x0A, 0x0D, 0x0A}
+            );
+        }
+
+        private static int NaiveSearch(IReadOnlyList<byte> source, IReadOnlyList<byte> pattern)
+        {
+            var n = source.Count - 1;
+            var m = pattern.Count - 1;
+
+            for (var i = 0; i <= n - m + 1; i++)
+            {
+                for (var j = 0; j <= m; j++)
+                {
+                    if (source[i + j] != pattern[j])
+                        break;
+                    if(j == m)
+                        return i;
+                }
+            }
+            return -1;
         }
 
         private static (HttpVerb, string, string) ParseRequestLine(string s)
@@ -115,7 +144,7 @@ namespace Server.Adapters.Http
             var parts = s.Split(' ');
 
             return (
-                (HttpVerb)Enum.Parse(typeof(HttpVerb), parts[0], true),
+                (HttpVerb) Enum.Parse(typeof(HttpVerb), parts[0], true),
                 parts.Length > 1 ? parts[1] : string.Empty,
                 parts.Length > 2 ? parts[2] : string.Empty
                 );
