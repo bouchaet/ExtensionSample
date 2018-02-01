@@ -292,4 +292,4 @@ __pycache__/
 *.xsd.cs
 
 # Others
-glentries.*
+glentries*
