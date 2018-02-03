@@ -43,7 +43,7 @@ namespace Server.Adapters.Http
             }
             catch (SocketException e)
             {
-                Logger.WriteError($"Exception while during httplistener shutdown: {e}");
+                Logger.WriteError($"Exception during httplistener shutdown: {e}");
                 throw;
             }
         }

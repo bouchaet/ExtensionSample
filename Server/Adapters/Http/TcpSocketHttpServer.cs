@@ -14,7 +14,6 @@ namespace Server.Adapters.Http
     {
         private readonly IPAddress _ipAddress;
         private readonly CancellationTokenSource _cts;
-
         private IHttpRouteTable _routetable;
 
         public override IHttpRouteTable RouteTable
@@ -34,25 +33,27 @@ namespace Server.Adapters.Http
             int.TryParse(Environment.GetEnvironmentVariable("es.httpserver.port"), out int port)
                 ? port
                 : 10867;
-                 
+
         public TcpSocketHttpServer() : this(GetConfiguredPort)
-        {  }
+        { }
 
         public TcpSocketHttpServer(int port) : base(port)
         {
-            var hostName = Dns.GetHostName();
-            var ipHostInfo = Dns.GetHostEntry(hostName);
-
-            _ipAddress = ipHostInfo.AddressList
-                .FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
-
-            if (_ipAddress == null)
-                throw new Exception("No IPv4 address for server");
-
+            _ipAddress = GetLocalIp();
             _cts = new CancellationTokenSource();
             _running = false;
             _routetable = new HttpRouteTable();
             _routetable.Add("/test/:entity/:id", new DebugResource());
+        }
+
+        private IPAddress GetLocalIp()
+        {
+            var hostName = Dns.GetHostName();
+
+            return Dns.GetHostEntry(hostName)
+                .AddressList
+                .FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork)
+                ?? throw new Exception("No IPv4 address for server");
         }
 
         public override async Task Start()
@@ -63,38 +64,33 @@ namespace Server.Adapters.Http
 
             var errors = 0;
             var workerTasks = new List<Task>();
-            var listening = false;
+            var accepting = false;
             Task<Socket> acceptAsync = null;
 
             while (!_cts.IsCancellationRequested)
             {
                 try
                 {
-                    if (!listening)
+                    if (!accepting)
                     {
                         acceptAsync = listener.AcceptAsync();
-                        listening = true;
+                        accepting = true;
                     }
 
                     await Task.WhenAny(acceptAsync, Task.Delay(1000));
 
                     if (acceptAsync.IsCompleted)
                     {
-                        listening = false;
+                        accepting = false;
                         if (acceptAsync.IsCompletedSuccessfully)
                         {
-                            workerTasks.Add(
-                                new HttpConnection(acceptAsync.Result, _cts.Token, _routetable)
-                                .Run()
-                            );
+                            var conn = new HttpConnection(acceptAsync.Result,
+                                _cts.Token, _routetable);
+                            workerTasks.Add(conn.Run());
                         }
                     }
 
-                    foreach (var t in workerTasks.Where(t => t.IsCompleted).ToArray())
-                    {
-                        Debug.Write("Worker removed");
-                        workerTasks.Remove(t);
-                    }
+                    workerTasks.RemoveAll(t => t.IsCompleted);
                 }
                 catch (Exception ex)
                 {

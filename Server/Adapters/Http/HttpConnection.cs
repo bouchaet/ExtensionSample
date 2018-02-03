@@ -57,19 +57,25 @@ namespace Server.Adapters.Http
                             _socketClient.Poll(oneSecond, SelectMode.SelectRead);
                         }
                     }
-
-                    try
-                    {
-                        netStream.Close();
-                        memoryStream.Close();
-                        _socketClient.Shutdown(SocketShutdown.Both);
-                        _socketClient.Close();
-                    }
-                    catch (SocketException e)
-                    {
-                        Logger.WriteError($"Exception: {e}");
-                    }
+                    Shutdown(memoryStream, netStream, _socketClient);
                 });
+        }
+
+        private static void Shutdown(MemoryStream memoryStream,
+            NetworkStream netStream,
+            Socket socket)
+        {
+            try
+            {
+                netStream.Close();
+                memoryStream.Close();
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+            }
+            catch (SocketException e)
+            {
+                Logger.WriteError($"Exception: {e}");
+            }
         }
 
         private byte[] MakeResponse(IHttpRequest request)
