@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algo.CS", "Algo.CS\Algo.CS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallelTest", "ParallelTest\ParallelTest.csproj", "{266D5D0B-8FB0-4B23-A9CF-0E2AB3C2EF4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Tests", "Server.Tests\Server.Tests.csproj", "{E3707AAA-DC6B-40A3-9644-5047444A41EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -194,6 +196,18 @@ Global
 		{266D5D0B-8FB0-4B23-A9CF-0E2AB3C2EF4D}.Release|x64.Build.0 = Release|Any CPU
 		{266D5D0B-8FB0-4B23-A9CF-0E2AB3C2EF4D}.Release|x86.ActiveCfg = Release|Any CPU
 		{266D5D0B-8FB0-4B23-A9CF-0E2AB3C2EF4D}.Release|x86.Build.0 = Release|Any CPU
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|x64.ActiveCfg = Debug|x64
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|x64.Build.0 = Debug|x64
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|x86.ActiveCfg = Debug|x86
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Debug|x86.Build.0 = Debug|x86
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|x64.ActiveCfg = Release|x64
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|x64.Build.0 = Release|x64
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|x86.ActiveCfg = Release|x86
+		{E3707AAA-DC6B-40A3-9644-5047444A41EA}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
