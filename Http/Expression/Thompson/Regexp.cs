@@ -3,74 +3,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
-using StateSetterList = System.Collections.Generic.IList<System.Action<State>>;
 
 internal class State
 {
-    public int c { get; set; }
-    public State Output { get; private set; }
-    public State Output1 { get; private set; }
-    public int LastList { get; set; }
+    public int c;
+    public State output;
+    public State output1;
+    public int lastlist;
 
     public State(int c, State o, State o1)
     {
         this.c = c;
-        Output = o;
-        Output1 = o1;
-        LastList = 0;
+        output = o;
+        output1 = o1;
+        lastlist = 0;
     }
 
-    public void SetOutput(State s) => Output = s;
-    public void SetOutput1(State s) => Output1 = s;
-
+    public void SetOutput(State s) => output = s;
+    public void SetOutput1(State s) => output1 = s;
 }
 
 internal class Frag
 {
-    public State Start { get; }
-    public StateSetterList Outputs { get; }
+    public State start;
+    public IList<Action<State>> outputs;
 
-    public Frag(State s, StateSetterList o)
+    public Frag(State s, IList<Action<State>> o)
     {
-        Start = s;
-        Outputs = o;
+        start = s;
+        outputs = o;
     }
-}
-
-public class Expr
-{
-    private State _start;
-
-    internal Expr(State start) 
-        => _start = start;
-    
-    public int Match(string s) 
-        => _start == null? 0 : Regexp.Match(_start, s);
 }
 
 internal static class Regexp
 {
     private static int SPLIT = 256;
     private static int MATCH = 257;
-    internal static StateSetterList List1(Action<State> accessor)
+    internal static IList<Action<State>> List1(Action<State> accessor)
     {
-        return new List<Action<State>> { accessor };
+        return new List<Action<State>> { x => accessor.Invoke(x) };
     }
 
-    private static StateSetterList Append(StateSetterList list1, StateSetterList list2)
-        => list1.Concat(list2).ToList();
-
-
-    private static void Patch(StateSetterList l, State s)
+    internal static IList<Action<State>> Append(IList<Action<State>> list1, IList<Action<State>> list2)
     {
-        foreach (var setter in l)
-            setter.Invoke(s);
+        return list1.Concat(list2).ToList();
     }
 
-    public static Expr CompilePostfix(string postfix)
-        => new Expr(Post2Nfa(postfix));
+    internal static void Patch(IList<Action<State>> l, State s)
+    {
+        foreach (var o in l)
+            o.Invoke(s);
+    }
 
-    private static State Post2Nfa(string postfix)
+    internal static State Post2Nfa(string postfix)
     {
         var stack = new Stack<Frag>();
         Frag e1, e2, e;
@@ -83,30 +68,30 @@ internal static class Regexp
                     {
                         e2 = stack.Pop();
                         e1 = stack.Pop();
-                        Patch(e1.Outputs, e2.Start);
-                        stack.Push(new Frag(e1.Start, e2.Outputs));
+                        Patch(e1.outputs, e2.start);
+                        stack.Push(new Frag(e1.start, e2.outputs));
                         break;
                     }
                 case '|': /* alternate */
                     {
                         e2 = stack.Pop();
                         e1 = stack.Pop();
-                        var s = new State(SPLIT, e1.Start, e2.Start);
-                        stack.Push(new Frag(s, Append(e1.Outputs, e2.Outputs)));
+                        var s = new State(SPLIT, e1.start, e2.start);
+                        stack.Push(new Frag(s, Append(e1.outputs, e2.outputs)));
                         break;
                     }
                 case '?': /* zero or one */
                     {
                         e = stack.Pop();
-                        var s = new State(SPLIT, e.Start, null);
-                        stack.Push(new Frag(s, Append(e.Outputs, List1(s.SetOutput1))));
+                        var s = new State(SPLIT, e.start, null);
+                        stack.Push(new Frag(s, Append(e.outputs, List1(s.SetOutput1))));
                         break;
                     }
                 case '+': /* zero or more */
                     {
                         e = stack.Pop();
-                        var s = new State(SPLIT, e.Start, null);
-                        Patch(e.Outputs, s);
+                        var s = new State(SPLIT, e.start, null);
+                        Patch(e.outputs, s);
                         stack.Push(new Frag(s, List1(s.SetOutput1)));
                         break;
                     }
@@ -120,64 +105,164 @@ internal static class Regexp
             }
         }
         e = stack.Pop();
-        if (stack.Any())
-            return null;
+        if (stack.Any()) return null;
 
-        Patch(e.Outputs, new State(MATCH, null, null));
-        return e.Start;
+        Patch(e.outputs, new State(MATCH, null, null));
+        return e.start;
     }
 
-    private static IList<State> StartList(State start, IList<State> list, ref int ListId)
+    private static int ListId = 0;
+
+    internal static IList<State> StartList(State start, IList<State> list)
     {
         ListId++;
-        AddState(list, start, ref ListId);
+        AddState(list, start);
         return list;
     }
 
-    private static void AddState(IList<State> list, State s, ref int ListId)
+    internal static void AddState(IList<State> list, State s)
     {
-        if (s == null || s.LastList == ListId)
+        if (s == null || s.lastlist == ListId)
             return;
 
-        s.LastList = ListId;
+        s.lastlist = ListId;
         if (s.c == SPLIT)
         {
-            AddState(list, s.Output, ref ListId);
-            AddState(list, s.Output1, ref ListId);
+            AddState(list, s.output);
+            AddState(list, s.output1);
             return;
         }
         list.Add(s);
     }
 
-    private static void Step(IList<State> current, int c, IList<State> next, ref int ListId)
+    internal static void Step(IList<State> current, int c, IList<State> next)
     {
         ListId++;
         next.Clear();
-        foreach (var state in current)
+        foreach (var s in current)
         {
-            if (state.c == c)
-                AddState(next, state.Output, ref ListId);
+            if (s.c == c)
+                AddState(next, s.output);
         }
     }
 
     internal static int Match(State start, string text)
     {
-        var ListId = 0;
-        var current = StartList(start, new List<State>(), ref ListId);
+        var current = StartList(start, new List<State>());
         IList<State> next = new List<State>();
         IList<State> temp = new List<State>();
 
-        foreach (var c in text)
+        foreach (var c in text.ToCharArray())
         {
-            Step(current, c, next, ref ListId);
+            Step(current, c, next);
             temp = current; current = next; next = temp;
         }
 
         return IsMatch(current);
     }
 
-    private static int IsMatch(IList<State> list)
-        => list.Any(s => s.c == MATCH) ? 1 : 0;
+    internal static int IsMatch(IList<State> list)
+    {
+        return list.Any(s => s.c == MATCH) ? 1 : 0;
+    }
+}
+
+internal class Postfix
+{
+    private class BodyExpr
+    {
+        private IList<char> str;
+        private Queue<char> op;
+        public bool concat;
+
+        public BodyExpr()
+        {
+            str = new List<char>();
+            op = new Queue<char>();
+            concat = false;
+        }
+
+        public char[] ToArray()
+        {
+            return str.Concat(op).ToArray();
+        }
+
+        public void AddOp(char c) => op.Enqueue(c);
+
+        public void AddCh(char c) => str.Add(c);
+
+        public void AddCh(char[] arr)
+        {
+            foreach(var ch in arr) str.Add(ch);
+        }
+
+        public void Flush()
+        {
+            foreach(var c in op)
+                str.Add(c);
+            op.Clear();
+        }
+    }
+    
+    public static string ToPostfix(string regex)
+    {
+        // a(bb)+a == abb.+.a.
+        var stack = new Stack<BodyExpr>();
+
+        BodyExpr t, e;
+        e = new BodyExpr();
+        stack.Push(e);
+
+        foreach(var c in regex)
+        {
+            switch(c)
+            {
+                case '(':
+                {
+                    stack.Push(e);
+                    e = new BodyExpr();
+                    break;
+                }
+                case ')':
+                {
+                    t = e;
+                    e = stack.Pop();
+                    e.AddCh(t.ToArray());
+                    break;
+                }
+                case '?':
+                case '*':
+                case '+':
+                {
+                    e.AddCh(c);
+                    if(e.concat)
+                        e.AddCh('.');
+                    //e.concat = true;
+                    break;
+                }
+                case '|':
+                {
+                    e.Flush();
+                    e.AddOp('|');
+                    e.concat = false;
+                    break;
+                }
+                default :
+                {
+                    e.AddCh(c);
+                    if(e.concat)
+                        e.AddCh('.');
+                    e.concat = true;
+                    break;
+                }
+            }
+        }
+
+        var s = stack.Pop();
+        if(stack.Any()) throw new ArgumentException();
+
+        return new string(s.ToArray());
+    }
 }
 
 public class RegexpTest
@@ -185,10 +270,28 @@ public class RegexpTest
     [Fact]
     public void TestWithPostfix()
     {
-        var expr = Regexp.CompilePostfix("abb.+.a.");
-        var match = expr.Match("abbbba");
+        var start = Regexp.Post2Nfa("abb.+.a.");
+        var match = Regexp.Match(start, "abbbba");
 
-        Assert.True(match == 1);
-        Assert.False(expr.Match("abbba") == 1);
+        Assert.Equal(1, match);
+    }
+
+    [Fact]
+    public void TestRegExToPostfix()
+    {
+        var postfix = Postfix.ToPostfix("a(bb)+a");
+        Assert.Equal("abb.+.a.", postfix);
+    }
+
+    [Fact]
+    public void TestRegExToPostfix_concat()
+    {
+        Assert.Equal("aa.a.a.", Postfix.ToPostfix("aaaa"));
+    }
+
+    [Fact]
+    public void TestRegExToPostfix_Alt()
+    {
+        Assert.Equal("ab.ba.|", Postfix.ToPostfix("ab|ba"));
     }
 }
