@@ -173,37 +173,52 @@ internal class Postfix
     {
         private IList<char> str;
         private Queue<char> op;
-        public bool concat;
+        public int concat;
 
         public BodyExpr()
         {
             str = new List<char>();
             op = new Queue<char>();
-            concat = false;
+            concat = 0;
         }
 
         public char[] ToArray()
         {
+            Adjust();
             return str.Concat(op).ToArray();
+        }
+
+        public void Adjust()
+        {
+            if (concat > 1)
+            {
+                concat--;
+                AddCh('.');
+            }
         }
 
         public void AddOp(char c) => op.Enqueue(c);
 
-        public void AddCh(char c) => str.Add(c);
+        public void AddCh(char c)
+        {
+            str.Add(c);
+        }
 
         public void AddCh(char[] arr)
         {
-            foreach(var ch in arr) str.Add(ch);
+            foreach (var ch in arr) str.Add(ch);
         }
 
         public void Flush()
         {
-            foreach(var c in op)
+            Adjust();
+
+            foreach (var c in op)
                 str.Add(c);
             op.Clear();
         }
     }
-    
+
     public static string ToPostfix(string regex)
     {
         // a(bb)+a == abb.+.a.
@@ -213,53 +228,51 @@ internal class Postfix
         e = new BodyExpr();
         stack.Push(e);
 
-        foreach(var c in regex)
+        foreach (var c in regex)
         {
-            switch(c)
+            switch (c)
             {
                 case '(':
-                {
-                    stack.Push(e);
-                    e = new BodyExpr();
-                    break;
-                }
+                    {
+                        stack.Push(e);
+                        e = new BodyExpr();
+                        break;
+                    }
                 case ')':
-                {
-                    t = e;
-                    e = stack.Pop();
-                    e.AddCh(t.ToArray());
-                    break;
-                }
+                    {
+                        t = e;
+                        e = stack.Pop();
+                        e.AddCh(t.ToArray());
+                        e.concat++;
+                        break;
+                    }
                 case '?':
                 case '*':
                 case '+':
-                {
-                    e.AddCh(c);
-                    if(e.concat)
-                        e.AddCh('.');
-                    //e.concat = true;
-                    break;
-                }
+                    {
+                        e.AddCh(c);
+                        e.Adjust();
+                        break;
+                    }
                 case '|':
-                {
-                    e.Flush();
-                    e.AddOp('|');
-                    e.concat = false;
-                    break;
-                }
-                default :
-                {
-                    e.AddCh(c);
-                    if(e.concat)
-                        e.AddCh('.');
-                    e.concat = true;
-                    break;
-                }
+                    {
+                        e.Flush();
+                        e.AddOp('|');
+                        e.concat = 0;
+                        break;
+                    }
+                default:
+                    {
+                        e.Adjust();
+                        e.AddCh(c);
+                        e.concat++;
+                        break;
+                    }
             }
         }
 
         var s = stack.Pop();
-        if(stack.Any()) throw new ArgumentException();
+        if (stack.Any()) throw new ArgumentException();
 
         return new string(s.ToArray());
     }
@@ -293,5 +306,11 @@ public class RegexpTest
     public void TestRegExToPostfix_Alt()
     {
         Assert.Equal("ab.ba.|", Postfix.ToPostfix("ab|ba"));
+    }
+
+    [Fact]
+    public void TestRegExToPostfix_Mix()
+    {
+        Assert.Equal("ab*.+cc.?d.|", Postfix.ToPostfix("(ab*)+|(cc)?d"));
     }
 }
