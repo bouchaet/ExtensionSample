@@ -121,7 +121,7 @@ namespace Server.Adapters.Http
 
     internal class HttpParser
     {
-        private MemoryStream _mem;
+        //private MemoryStream _mem;
 
         private IList<Parsable> _tokens;
 
@@ -272,6 +272,7 @@ namespace Server.Adapters.Http
         public HttpLexer(MemoryStream stream) 
         {
             _stream = stream;
+            _buffer = new List<(string, byte[])>();
         }
 
         public (string Tag, byte[] Value)? MoveNext()

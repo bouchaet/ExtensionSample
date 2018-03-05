@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Loader;
+using System.Threading;
 using Aws.ApplicationIntegration.SimpleQueueService;
 using Entities;
 using Entities.Http;
@@ -33,11 +35,32 @@ namespace Server
             //TEST
 
 
-            Debug.Write("Server is running...");
-            Console.WriteLine("Press enter twice to exit.");
-            Console.ReadLine();
-            httpserver.Stop();
-            Console.ReadLine();
+            // Debug.Write("Server is running...");
+            // Console.WriteLine("Press enter twice to exit.");
+            // Console.ReadLine();
+            // httpserver.Stop();
+            // Console.ReadLine();
+            // Debug.Write("Bye bye!");
+
+
+            var ended = new ManualResetEventSlim();
+            var starting = new ManualResetEventSlim();
+
+            AssemblyLoadContext.Default.Unloading += ctx =>
+            {
+                System.Console.WriteLine("Unloading fired");
+                starting.Set();
+
+                System.Console.WriteLine("Waiting for completion");
+                ended.Wait();
+            };
+
+            System.Console.WriteLine("Waiting for signals");
+            starting.Wait();
+
+            System.Console.WriteLine("Received signal gracefully shutting down");
+            Thread.Sleep(5000);
+            ended.Set();
         }
     }
 }
