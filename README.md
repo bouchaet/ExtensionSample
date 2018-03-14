@@ -1,5 +1,7 @@
 # ExtensionSample
 Dependency Rule playground
+[![Build status](https://ci.appveyor.com/api/projects/status/1ffrdoc3o9m5fti2?svg=true)](https://ci.appveyor.com/project/bouchaet/extensionsample) 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/bouchaet/extensionsample/master/LICENSE)
 
 ## Issues
 If having `GetReferenceNearestTargetFrameworkTask` error with omnisharp on Windows,
