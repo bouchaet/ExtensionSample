@@ -1,5 +1,5 @@
 # ExtensionSample
-[![Build status](https://ci.appveyor.com/api/projects/status/1ffrdoc3o9m5fti2?svg=true)](https://ci.appveyor.com/project/bouchaet/extensionsample) 
+[![Build status](https://ci.appveyor.com/api/projects/status/1ffrdoc3o9m5fti2?svg=true)](https://ci.appveyor.com/project/bouchaet/extensionsample) [![Coverage Status](https://coveralls.io/repos/github/bouchaet/ExtensionSample/badge.svg?branch=master)](https://coveralls.io/github/bouchaet/ExtensionSample?branch=master) 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/bouchaet/extensionsample/master/LICENSE)  
 Dependency Rule playground
 
