@@ -2,6 +2,7 @@ using System;
 using System.IO;
 
 namespace Algo
+{
     public class CircularStream : Stream
     {
         private readonly bool _canRead;
