@@ -1,7 +1,8 @@
 using System;
 using System.IO;
 
-namespace Algo.IO
+namespace Playground.IO
+{
     public class CircularStream : Stream
     {
         private readonly bool _canRead;
